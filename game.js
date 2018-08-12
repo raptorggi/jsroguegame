@@ -1,0 +1,8 @@
+class Game {
+  start() {
+  }
+
+  stop() {
+  }
+
+}
