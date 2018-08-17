@@ -5,11 +5,13 @@
     
 </head>
 <body onload="init()">
-  <canvas id="canvas" width="800" height="600"></canvas>
+  <div id="game" > 
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <form>
+      <input type = "button" value = "Старт" onclick="move();">
+      <input type = "button" value = "Пауза" onclick="clearInterval(idTimer);">
+    </form>
+  </div>
   <script src="main.js"></script>
-  <form>
-    <input type = "button" value = "Старт" onclick="move();">
-    <input type = "button" value = "Пауза" onclick="clearInterval(idTimer);">
-  </form>
 </body>
 </html>
