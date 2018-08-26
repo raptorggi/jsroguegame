@@ -1,9 +1,40 @@
 //-----Additional classes and functions ------------
 
+
+function move() {
+  idTimer = setInterval('mainLoop();', tick_interval);
+}
+
+function mainLoop() {
+  if (game.isStarted()) {
+    game.playerMove();
+    game.drawAll();
+  }
+  else {
+    clearInterval(idTimer);
+  }
+}
+
+function init() {
+  window.game = new Game(31, 31, 15, 15, 'canvas', 'game');
+  window.tick_interval = 100;
+  game.generateMap();
+  game.clearScreen(game.canvas_width, game.canvas_height);
+  game.drawMinimap();
+}
+
 function randomInteger(min, max) {
   var rand = min - 0.5 + Math.random() * (max - min + 1)
   rand = Math.round(rand);
   return rand;
+}
+
+function arrayClone(array) {
+  let copy = [];
+  for (let i = 0; i < array.length; i++) {
+    copy[i] = array[i].slice();
+  }
+  return copy;
 }
 
 class Point {
@@ -35,20 +66,25 @@ class Game {
   constructor(w, h, cell_w, cell_h, canvas, containerId) {
     this.canvas_id = canvas;
     this.container_id = containerId;
+    
     this.cell_width = cell_w;
     this.cell_height = cell_h;
     this.cells_width_count = w;
     this.cells_height_count = h;
-    this.canvas_width = this.cells_width_count * this.cell_width + 5 + this.cells_width_count * 3;
-    this.canvas_height = this.cells_height_count * this.cell_height;
-    this.map_width = this.cells_width_count * this.cell_width;
-    this.map_height = this.canvas_height;
-    this.loadCanvas();
 
+    this.map_cells_width_count = 100;
+    this.map_cells_height_count = 100; 
+    this.map_width = this.cells_width_count * this.cell_width;
+    this.map_height = this.cells_height_count * this.cell_height;
+
+    this.canvas_width = this.cells_width_count * this.cell_width + 5 + this.map_cells_width_count * 2;
+    this.canvas_height = this.cells_height_count * this.cell_height;
+    this.loadCanvas();
     this.canvas = document.getElementById(this.canvas_id);
     this.ctx = this.canvas.getContext("2d");
     this.started = 1;
-    this.map = new GameMap(60, 60);
+
+    this.map = new GameMap(this.map_cells_width_count, this.map_cells_height_count);
     this.player;  // player coordinates (Point)
     this.player_new; //player coordinates after pressing move button
     this.keys = document.getElementById(containerId);
@@ -198,33 +234,72 @@ class GameMap {
   }
 
   generateGameFieldTemplate() {
+    let template = this.initializeGameField();
+    let simulate_steps = 4;
+    for (let step = 0; step <= simulate_steps; step++) {
+      let new_template = this.simulateStep(template);
+      template = arrayClone(new_template);
+    }
+    return template;
+  }
+
+  initializeGameField() {
     let template = Array(this.height).fill(1).map(()=>Array(this.width).fill(1)); // map W x H
-    let dig_position = this.start_position.copy();
-    let dig_position_new = dig_position.copy();
-    let cells_to_open = Math.round(this.height * this.width * 0.1);
-    while (cells_to_open > 0) {
-      switch (Math.abs(randomInteger(0, 3))) {
-        case 1: dig_position_new.y += 1;
-        case 2: dig_position_new.y -= 1;
-        case 3: dig_position_new.x += 1;
-        case 0: dig_position_new.x -= 1;
+    let chance_to_set_wall = 41;
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        template[y][x] = (randomInteger(0, 100) < chance_to_set_wall) ? 1 : 0;
       }
-      if (this.isInMap(dig_position_new)){ 
-        if (template[dig_position_new.y][dig_position_new.x] != 0 ) {
-          dig_position = dig_position_new.copy();
-          template[dig_position.y][dig_position.x] = 0;
-          cells_to_open -= 1;
+    }
+    return template;
+  }
+
+  simulateStep(old_template) {
+    let birth_limit = 4;
+    let death_limit = 3;
+    let template = arrayClone(old_template);
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        let count = this.countAliveNeighbours(template,x ,y);
+        if (old_template[y][x]) {
+          if (count < death_limit) {
+            template[y][x] = 0;
+          }
+          else {
+            template[y][x] = 1;
+          }
         }
         else {
-          dig_position = dig_position_new.copy();
+          if (count > birth_limit) {
+            template[y][x] = 1;
+          }
+          else {
+            template[y][x] = 0;
+          }
         }
       }
-      else {
-        dig_position = this.start_position.copy();
-      }
-      dig_position_new = dig_position.copy();
     }
-  return template;
+    return template;
+  }
+
+  countAliveNeighbours(template, x, y) {
+    let count = 0;
+    for (let i = -1; i < 2; i++) {
+      for (let j = -1; j < 2; j++) {
+        let neighbour_x = x + i;
+        let neighbour_y = y + j;
+        if (i == 0 && j == 0 ) {
+          // nothing
+        }
+        else if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= this.width || neighbour_y >= this.height) {
+          count += 1;
+        }
+        else if (template[neighbour_y][neighbour_x] == 1) {
+          count += 1;
+        }
+      }
+    }
+    return count;
   }
 } 
 
@@ -265,33 +340,11 @@ class Player extends Object {
 
   drawOnMain(posX, posY, ctx) {
     ctx.fillStyle = this.color;
-    ctx.fillRect(posX, posY, this.width - 6, this.height - 6);
+    ctx.fillRect(posX + 2, posY + 2, this.width - 5, this.height - 5);
   }
 
   drawOnMinimap(posX, posY, ctx) {
     ctx.fillStyle = this.color;
     ctx.fillRect(posX, posY, 3, 2);
   }
-}
-
-function move() {
-  idTimer = setInterval('mainLoop();', tick_interval);
-}
-
-function mainLoop() {
-  if (game.isStarted()) {
-    game.playerMove();
-    game.drawAll();
-  }
-  else {
-    clearInterval(idTimer);
-  }
-}
-
-function init() {
-  window.game = new Game(31, 31, 15, 15, 'canvas', 'game');
-  window.tick_interval = 100;
-  game.generateMap();
-  game.clearScreen(game.canvas_width, game.canvas_height);
-  game.drawMinimap();
 }
