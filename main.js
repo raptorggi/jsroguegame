@@ -116,7 +116,6 @@ class Game {
 
   generateMap() {
     let template = this.map.generateGameFieldTemplate();
-    // console.log(template);
     for (let y = 0; y < this.map.height; y++) {
       for (let x = 0; x < this.map.width; x++) {
         if (template[y][x] == 1) {
@@ -151,10 +150,13 @@ class Game {
   }
 
   playerMove() {
+    if (!this.map.isInMap(this.player_new)) {
+      this.player_new = this.player.copy();
+    }
     if (!this.player.isEqual(this.player_new)) {
       if (this.map.game_field[this.player_new.y][this.player_new.x] == null) {
         this.map.game_field[this.player_new.y][this.player_new.x] = this.map.game_field[this.player.y][this.player.x]; 
-        this.map.game_field[this.player_new.y][this.player_new.x] = null;
+        this.map.game_field[this.player.y][this.player.x] = null;
         this.player = this.player_new.copy();
       }
       else {
