@@ -176,11 +176,11 @@ class Game {
       point.x = 0;
     }
 
-    if (point.y + this.cells_height_count > 60 - 1) {
-      point.y = 60 - this.cells_height_count - 1;
+    if (point.y + this.cells_height_count > this.map_cells_height_count - 1) {
+      point.y = this.map_cells_height_count - this.cells_height_count - 1;
     }
-    if (point.x + this.cells_height_count > 60 - 1) {
-      point.x = 60 - this.cells_width_count - 1;
+    if (point.x + this.cells_height_count > this.map_cells_width_count - 1) {
+      point.x = this.map_cells_width_count - this.cells_width_count - 1;
     }
     return point;
   }
@@ -235,7 +235,7 @@ class GameMap {
 
   generateGameFieldTemplate() {
     let template = this.initializeGameField();
-    let simulate_steps = 4;
+    let simulate_steps = 5;
     for (let step = 0; step <= simulate_steps; step++) {
       let new_template = this.simulateStep(template);
       template = arrayClone(new_template);
@@ -245,7 +245,7 @@ class GameMap {
 
   initializeGameField() {
     let template = Array(this.height).fill(1).map(()=>Array(this.width).fill(1)); // map W x H
-    let chance_to_set_wall = 41;
+    let chance_to_set_wall = 37;
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         template[y][x] = (randomInteger(0, 100) < chance_to_set_wall) ? 1 : 0;
