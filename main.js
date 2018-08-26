@@ -177,10 +177,10 @@ class Game {
     }
 
     if (point.y + this.cells_height_count > this.map_cells_height_count - 1) {
-      point.y = this.map_cells_height_count - this.cells_height_count - 1;
+      point.y = this.map_cells_height_count - this.cells_height_count;
     }
     if (point.x + this.cells_height_count > this.map_cells_width_count - 1) {
-      point.x = this.map_cells_width_count - this.cells_width_count - 1;
+      point.x = this.map_cells_width_count - this.cells_width_count;
     }
     return point;
   }
