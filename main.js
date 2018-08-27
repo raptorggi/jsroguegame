@@ -16,7 +16,7 @@ function mainLoop() {
 }
 
 function init() {
-  window.game = new Game(31, 31, 15, 15, 'canvas', 'game');
+  window.game = new Game(41, 41, 15, 15, 'canvas', 'game');
   window.tick_interval = 100;
   game.generateMap();
   game.clearScreen(game.canvas_width, game.canvas_height);
@@ -118,10 +118,11 @@ class Game {
   }
 
   drawAll() {
-    this.clearScreen(this.map_width, this.map_height);
+    this.clearScreen(this.canvas_width, this.map_height);
     this.drawMainScreen();
     this.ctx.fillStyle = "#dd99ff";
     this.ctx.fillRect(this.map_width, 0, 5, this.canvas_height);
+    this.drawMinimap();
   }
 
   drawMainScreen() {
@@ -175,7 +176,6 @@ class Game {
     if (point.x < 0) {
       point.x = 0;
     }
-
     if (point.y + this.cells_height_count > this.map_cells_height_count - 1) {
       point.y = this.map_cells_height_count - this.cells_height_count;
     }
@@ -262,20 +262,10 @@ class GameMap {
       for (let x = 0; x < this.width; x++) {
         let count = this.countAliveNeighbours(template,x ,y);
         if (old_template[y][x]) {
-          if (count < death_limit) {
-            template[y][x] = 0;
-          }
-          else {
-            template[y][x] = 1;
-          }
+          (count < death_limit) ? template[y][x] = 0 : template[y][x] = 1;
         }
         else {
-          if (count > birth_limit) {
-            template[y][x] = 1;
-          }
-          else {
-            template[y][x] = 0;
-          }
+          (count > birth_limit) ? template[y][x] = 1 : template[y][x] = 0;
         }
       }
     }
