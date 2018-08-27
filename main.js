@@ -1,6 +1,5 @@
 //-----Additional classes and functions ------------
 
-
 function move() {
   idTimer = setInterval('mainLoop();', tick_interval);
 }
@@ -8,7 +7,7 @@ function move() {
 function mainLoop() {
   if (game.isStarted()) {
     game.playerMove();
-    game.drawAll();
+    game.draw();
   }
   else {
     clearInterval(idTimer);
@@ -16,11 +15,10 @@ function mainLoop() {
 }
 
 function init() {
-  window.game = new Game(41, 41, 15, 15, 'canvas', 'game');
+  window.game = new Game('canvas', 'game');
   window.tick_interval = 100;
   game.generateMap();
-  game.clearScreen(game.canvas_w, game.canvas_h);
-  game.drawMinimap();
+  game.draw();
 }
 
 function randomInteger(min, max) {
@@ -60,33 +58,29 @@ class Point {
   }
 }
 
+class Size {
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+  }
+}
+
 //------------------ END ------------------
 
 class Game {
-  constructor(w, h, object_w, object_h, canvas, containerId) {
+  constructor(canvas, containerId) {
     this.canvas_id = canvas;
     this.container_id = containerId;
-    
-    this.cells_w = w;
-    this.cells_h = h;
-    this.cells_map_w = 100;
-    this.cells_map_h = 100;
+    this.map_size = new Size(100, 100);
+    this.screen_size = new Size(41, 41);
 
-    this.object_w = object_w;
-    this.object_h = object_h;
-    this.map_w = this.cells_w * this.object_w;
-    this.map_h = this.cells_h * this.object_h;
-    this.canvas_w = this.cells_w * this.object_w + 5 + this.cells_map_w * 2;
-    this.canvas_h = this.cells_h * this.object_h;
+    this.map = new GameMap(this.map_size.width, this.map_size.height);
 
-    this.canvas = this.loadCanvas();
-    this.ctx = this.canvas.getContext("2d");
-    this.started = 1;
-
-    this.map = new GameMap(this.cells_map_w, this.cells_map_h);
-    this.user_interface = new UserInteface("#ffffff", this.ctx);
+    this.renderer = new Renderer(this.canvas_id, this.container_id, this.map_size, this.screen_size);
+    this.interface = new UserInteface("#ffffff", this.ctx);
     this.player;  // player coordinates (Point)
     this.player_new; //player coordinates after pressing move button
+    this.started = 1;
     this.keys = document.getElementById(containerId);
 
     this.keys.addEventListener('keyup', function (event) {
@@ -106,69 +100,28 @@ class Game {
     });
   }
 
-  loadCanvas() {
-    let canvas = document.createElement('canvas'),
-    div = document.getElementById(this.container_id);
-    canvas.id = this.canvas_id;
-    canvas.width = this.canvas_w;
-    canvas.height = this.canvas_h;
-    canvas.style.position = "absolute";
-    canvas.style.border = "1px solid";
-    div.appendChild(canvas);
-    return canvas;
-  }
-
-  drawAll() { //map_w, map_h, minimap_w, minimap_h)
-    this.clearScreen(this.canvas_w, this.map_h);
-    // this.user_interface.drawDelimiters(this.canvas_width, this.canvas_height, this.map_width, this.map_height, this.)
-    this.drawMainScreen();
-    this.drawMinimap();
-  }
-
-  drawMainScreen() {
-    let start = this.getCameraStartCoordinates();
-    for (let y = start.y, j = 0; y < start.y + this.cells_h; y++, j++) {
-      for (let x = start.x, i = 0; x < start.x + this.cells_w; x++, i++) {
-        if (this.map.game_field[y][x] != null) {
-          this.map.game_field[y][x].drawOnMain(i * this.object_w, j * this.object_h, this.ctx);
-        }
-      }
-    }  
-  }
-
-  drawMinimap() {
-    for (let y = 0; y < this.map.height; y++) {
-      for (let x = 0; x < this.map.width; x++) {
-        if (this.map.game_field[y][x] != null) {
-          this.map.game_field[y][x].drawOnMinimap(this.map_w + 5 + x * 2, y * 2, this.ctx);
-        }
-      }
-    }
-  }
-
-  clearScreen(w, h) {
-    this.ctx.fillStyle = "#000000";
-    this.ctx.fillRect(0, 0, w, h);
-  }
-
   generateMap() {
     let template = this.map.generateGameFieldTemplate();
     for (let y = 0; y < this.map.height; y++) {
       for (let x = 0; x < this.map.width; x++) {
         if (template[y][x] == 1) {
-          this.map.game_field[y][x] = new Wall(this.object_w, this.object_h);
+          this.map.game_field[y][x] = new Wall(this.renderer.object.width, this.renderer.object.height);
         }
       }
     }
-    this.map.game_field[this.map.start_position.y][this.map.start_position.x] = new Player(this.object_w, this.object_h);
+    this.map.game_field[this.map.start_position.y][this.map.start_position.x] = new Player(this.renderer.object.width, this.renderer.object.height);
     this.player = this.map.start_position.copy();
     this.player_new = this.player.copy();
   }
 
+  draw() {
+    this.renderer.drawAll(this.map, this.getCameraStartCoordinates());
+  }
+
   getCameraStartCoordinates() {
     let point = this.player.copy();
-    let w = (this.cells_w - 1) / 2;
-    let h = (this.cells_h - 1) / 2;
+    let w = (this.screen_size.width - 1) / 2;
+    let h = (this.screen_size.height - 1) / 2;
     point.set(point.x - w, point.y - h);
     if (point.y < 0) {
       point.y = 0;
@@ -176,11 +129,11 @@ class Game {
     if (point.x < 0) {
       point.x = 0;
     }
-    if (point.y + this.cells_h > this.cells_map_h - 1) {
-      point.y = this.cells_map_h - this.cells_h;
+    if (point.y + this.screen_size.height > this.map_size.height - 1) {
+      point.y = this.map_size.height - this.screen_size.height;
     }
-    if (point.x + this.cells_w > this.cells_map_w - 1) {
-      point.x = this.cells_map_w - this.cells_w;
+    if (point.x + this.screen_size.width > this.map_size.width - 1) {
+      point.x = this.map_size.width - this.screen_size.width;
     }
     return point;
   }
@@ -208,13 +161,62 @@ class Game {
   isStarted() {
     return this.started;
   }
+}
 
-  context() {
-    return this.ctx;
+class Renderer {
+  constructor(canvas_id, container_id, map_size, screen_size) {
+    this.object = new Size(15, 15);
+    this.screen_size = screen_size;
+    this.map = new Size(this.screen_size.width * this.object.width, this.screen_size.height * this.object.height);
+    this.minimap = new Size(map_size.width * 2, map_size.height * 2);
+    this.canvas = new Size(this.map.width + 5 + this.minimap.width, this.map.height);
+
+    this.canvas_obj = this.loadCanvas(canvas_id, container_id, this.canvas.width, this.canvas.height);
+    this.ctx = this.canvas_obj.getContext("2d");
   }
 
-  canvas() {
-    return this.canvas;
+  loadCanvas(canvas_id, container_id, width, height) {
+    let canvas = document.createElement('canvas'),
+    div = document.getElementById(container_id);
+    canvas.id = canvas_id;
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.position = "absolute";
+    canvas.style.border = "1px solid";
+    div.appendChild(canvas);
+    return canvas;
+  }
+
+  drawAll(map, position) {
+    this.clearScreen(this.canvas.width, this.canvas.height);
+    // this.interface.drawDelimiters(this.canvas_px.width, this.canvas_px.height, this.map_px.width, this.map_px.height, this.minimap.width, this.minimap.height);
+    this.drawMainScreen(map, position);
+    this.drawMinimap(map);
+  }
+
+  drawMainScreen(map, position) {
+    for (let y = position.y, j = 0; y < position.y + this.screen_size.height; y++, j++) {
+      for (let x = position.x, i = 0; x < position.x + this.screen_size.width; x++, i++) {
+        if (map.game_field[y][x] != null) {
+          map.game_field[y][x].drawOnMain(i * this.object.width, j * this.object.height, this.ctx);
+        }
+      }
+    }  
+  }
+
+  drawMinimap(map) {
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (map.game_field[y][x] != null) {
+          map.game_field[y][x].drawOnMinimap(this.map.width + 5 + x * 2, y * 2, this.ctx);
+        }
+      }
+    }
+  }
+
+  clearScreen(w, h) {
+    this.ctx.fillStyle = "#000000";
+    this.ctx.fillRect(0, 0, w, h);
   }
 }
 
@@ -316,7 +318,7 @@ class Wall extends Object {
 
   drawOnMinimap(posX, posY, ctx) {
     ctx.fillStyle = this.color;
-    ctx.fillRect(posX, posY, 3, 2);
+    ctx.fillRect(posX, posY, 2, 2);
   }
 }
 
@@ -335,7 +337,7 @@ class Player extends Object {
 
   drawOnMinimap(posX, posY, ctx) {
     ctx.fillStyle = this.color;
-    ctx.fillRect(posX, posY, 3, 2);
+    ctx.fillRect(posX, posY, 2, 2);
   }
 }
 
@@ -343,10 +345,18 @@ class UserInteface {
   constructor(color, ctx) {
     this.color = color;
     this.ctx = ctx;
+    this.main_border = 2;
+    this.minimap_border = 1;
   }
 
   drawDelimiters(main_w, main_h, map_w, map_h, minimap_w, minimap_h) {
     this.ctx.fillStyle = this.color;
     this.ctx.fillRect(map_w, 0, 5, main_w);
+  }
+
+  drawBorders() {
+    this.ctx.fillStyle = color;
+    this.ctx.lineWidth = minimap_border;
+
   }
 }
