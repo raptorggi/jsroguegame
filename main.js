@@ -19,7 +19,7 @@ function init() {
   window.game = new Game(41, 41, 15, 15, 'canvas', 'game');
   window.tick_interval = 100;
   game.generateMap();
-  game.clearScreen(game.canvas_width, game.canvas_height);
+  game.clearScreen(game.canvas_w, game.canvas_h);
   game.drawMinimap();
 }
 
@@ -63,28 +63,28 @@ class Point {
 //------------------ END ------------------
 
 class Game {
-  constructor(w, h, cell_w, cell_h, canvas, containerId) {
+  constructor(w, h, object_w, object_h, canvas, containerId) {
     this.canvas_id = canvas;
     this.container_id = containerId;
     
-    this.cell_width = cell_w;
-    this.cell_height = cell_h;
-    this.cells_width_count = w;
-    this.cells_height_count = h;
+    this.cells_w = w;
+    this.cells_h = h;
+    this.cells_map_w = 100;
+    this.cells_map_h = 100;
 
-    this.map_cells_width_count = 100;
-    this.map_cells_height_count = 100; 
-    this.map_width = this.cells_width_count * this.cell_width;
-    this.map_height = this.cells_height_count * this.cell_height;
+    this.object_w = object_w;
+    this.object_h = object_h;
+    this.map_w = this.cells_w * this.object_w;
+    this.map_h = this.cells_h * this.object_h;
+    this.canvas_w = this.cells_w * this.object_w + 5 + this.cells_map_w * 2;
+    this.canvas_h = this.cells_h * this.object_h;
 
-    this.canvas_width = this.cells_width_count * this.cell_width + 5 + this.map_cells_width_count * 2;
-    this.canvas_height = this.cells_height_count * this.cell_height;
-    this.loadCanvas();
-    this.canvas = document.getElementById(this.canvas_id);
+    this.canvas = this.loadCanvas();
     this.ctx = this.canvas.getContext("2d");
     this.started = 1;
 
-    this.map = new GameMap(this.map_cells_width_count, this.map_cells_height_count);
+    this.map = new GameMap(this.cells_map_w, this.cells_map_h);
+    this.user_interface = new UserInteface("#ffffff", this.ctx);
     this.player;  // player coordinates (Point)
     this.player_new; //player coordinates after pressing move button
     this.keys = document.getElementById(containerId);
@@ -110,27 +110,27 @@ class Game {
     let canvas = document.createElement('canvas'),
     div = document.getElementById(this.container_id);
     canvas.id = this.canvas_id;
-    canvas.width = this.canvas_width;
-    canvas.height = this.canvas_height;
+    canvas.width = this.canvas_w;
+    canvas.height = this.canvas_h;
     canvas.style.position = "absolute";
     canvas.style.border = "1px solid";
     div.appendChild(canvas);
+    return canvas;
   }
 
-  drawAll() {
-    this.clearScreen(this.canvas_width, this.map_height);
+  drawAll() { //map_w, map_h, minimap_w, minimap_h)
+    this.clearScreen(this.canvas_w, this.map_h);
+    // this.user_interface.drawDelimiters(this.canvas_width, this.canvas_height, this.map_width, this.map_height, this.)
     this.drawMainScreen();
-    this.ctx.fillStyle = "#dd99ff";
-    this.ctx.fillRect(this.map_width, 0, 5, this.canvas_height);
     this.drawMinimap();
   }
 
   drawMainScreen() {
     let start = this.getCameraStartCoordinates();
-    for (let y = start.y, j = 0; y < start.y + this.cells_height_count; y++, j++) {
-      for (let x = start.x, i = 0; x < start.x + this.cells_width_count; x++, i++) {
+    for (let y = start.y, j = 0; y < start.y + this.cells_h; y++, j++) {
+      for (let x = start.x, i = 0; x < start.x + this.cells_w; x++, i++) {
         if (this.map.game_field[y][x] != null) {
-          this.map.game_field[y][x].drawOnMain(i * this.cell_width, j * this.cell_height, this.ctx);
+          this.map.game_field[y][x].drawOnMain(i * this.object_w, j * this.object_h, this.ctx);
         }
       }
     }  
@@ -140,7 +140,7 @@ class Game {
     for (let y = 0; y < this.map.height; y++) {
       for (let x = 0; x < this.map.width; x++) {
         if (this.map.game_field[y][x] != null) {
-          this.map.game_field[y][x].drawOnMinimap(this.map_width + 5 + x * 2, y * 2, this.ctx);
+          this.map.game_field[y][x].drawOnMinimap(this.map_w + 5 + x * 2, y * 2, this.ctx);
         }
       }
     }
@@ -156,19 +156,19 @@ class Game {
     for (let y = 0; y < this.map.height; y++) {
       for (let x = 0; x < this.map.width; x++) {
         if (template[y][x] == 1) {
-          this.map.game_field[y][x] = new Wall(this.cell_width, this.cell_height);
+          this.map.game_field[y][x] = new Wall(this.object_w, this.object_h);
         }
       }
     }
-    this.map.game_field[this.map.start_position.y][this.map.start_position.x] = new Player(this.cell_width, this.cell_height);
+    this.map.game_field[this.map.start_position.y][this.map.start_position.x] = new Player(this.object_w, this.object_h);
     this.player = this.map.start_position.copy();
     this.player_new = this.player.copy();
   }
 
   getCameraStartCoordinates() {
     let point = this.player.copy();
-    let w = (this.cells_width_count - 1) / 2;
-    let h = (this.cells_height_count - 1) / 2;
+    let w = (this.cells_w - 1) / 2;
+    let h = (this.cells_h - 1) / 2;
     point.set(point.x - w, point.y - h);
     if (point.y < 0) {
       point.y = 0;
@@ -176,11 +176,11 @@ class Game {
     if (point.x < 0) {
       point.x = 0;
     }
-    if (point.y + this.cells_height_count > this.map_cells_height_count - 1) {
-      point.y = this.map_cells_height_count - this.cells_height_count;
+    if (point.y + this.cells_h > this.cells_map_h - 1) {
+      point.y = this.cells_map_h - this.cells_h;
     }
-    if (point.x + this.cells_height_count > this.map_cells_width_count - 1) {
-      point.x = this.map_cells_width_count - this.cells_width_count;
+    if (point.x + this.cells_w > this.cells_map_w - 1) {
+      point.x = this.cells_map_w - this.cells_w;
     }
     return point;
   }
@@ -336,5 +336,17 @@ class Player extends Object {
   drawOnMinimap(posX, posY, ctx) {
     ctx.fillStyle = this.color;
     ctx.fillRect(posX, posY, 3, 2);
+  }
+}
+
+class UserInteface {
+  constructor(color, ctx) {
+    this.color = color;
+    this.ctx = ctx;
+  }
+
+  drawDelimiters(main_w, main_h, map_w, map_h, minimap_w, minimap_h) {
+    this.ctx.fillStyle = this.color;
+    this.ctx.fillRect(map_w, 0, 5, main_w);
   }
 }
