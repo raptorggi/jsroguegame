@@ -1,4 +1,4 @@
-class Object {
+class GameObject {
   constructor(w, h) {
     this.width = w;
     this.height = h;
@@ -6,7 +6,7 @@ class Object {
   }
 }
 
-class Terrain extends Object {
+class Terrain extends GameObject {
   constructor() {
     super();
   }
@@ -32,7 +32,7 @@ class Wall extends Terrain {
   }
 }
 
-class Character extends Object {
+class Character extends GameObject {
   constructor() {
     super();
   }

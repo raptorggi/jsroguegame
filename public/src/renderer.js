@@ -6,22 +6,24 @@ class Renderer {
     this.map = new Size(this.screen_size.width * this.tile.width, this.screen_size.height * this.tile.height);
     this.minimap = new Size(this.map_size.width * 2, this.map_size.height * 2);
     this.canvas = new Size(this.map.width + 5 + this.minimap.width, this.map.height);
-
-    this.canvas_obj = this.loadCanvas(canvas_id, container_id, this.canvas.width, this.canvas.height);
-    this.ctx = this.canvas_obj.getContext("2d");
+    
+    //Create a Pixi Application
+    this.app = new PIXI.Application({ width: this.canvas.width, height: this.canvas.height});
+    //Add the canvas that Pixi automatically created for you to the HTML document
+    document.body.appendChild(this.app.view);
   }
 
-  loadCanvas(canvas_id, container_id, width, height) {
-    let canvas = document.createElement('canvas'),
-    div = document.getElementById(container_id);
-    canvas.id = canvas_id;
-    canvas.width = width;
-    canvas.height = height;
-    canvas.style.position = "absolute";
-    canvas.style.border = "1px solid";
-    div.appendChild(canvas);
-    return canvas;
-  }
+  // loadCanvas(canvas_id, container_id, width, height) {
+  //   let canvas = document.createElement('canvas'),
+  //   div = document.getElementById(container_id);
+  //   canvas.id = canvas_id;
+  //   canvas.width = width;
+  //   canvas.height = height;
+  //   canvas.style.position = "absolute";
+  //   canvas.style.border = "1px solid";
+  //   div.appendChild(canvas);
+  //   return canvas;
+  // }
 
   drawAll(map, player_position) {
     let position = this.getCameraStartCoordinates(player_position);
