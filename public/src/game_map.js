@@ -3,7 +3,7 @@ class GameMap {
     this.width = w;
     this.height = h;
     this.game_field;
-    this.start_position = new Point(Math.abs(randomInteger(0, this.height - 1)), Math.abs(randomInteger(0, this.width - 1)));
+    this.start_position;
   }
 
   isOnMap(coords) {
@@ -11,6 +11,10 @@ class GameMap {
      return  true;
     }
     return false;
+  }
+
+  setStartPosition() {
+    this.start_position = new Point(Math.abs(randomInteger(0, this.height - 1)), Math.abs(randomInteger(0, this.width - 1)));
   }
 
   createTemplate() {

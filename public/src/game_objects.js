@@ -22,8 +22,7 @@ class Wall extends Terrain {
     this.size = size.copy();
     this.texture = texture;
     this.sprite = new PIXI.Sprite(this.texture);
-    this.sprite.position.x = position.x;
-    this.sprite.position.y = position.y;
+    this.sprite.position.set(position.x, position.y);
   }
 }
 
@@ -34,19 +33,23 @@ class Floor extends Terrain {
     this.size = size.copy();
     this.texture = texture;
     this.sprite = new PIXI.Sprite(this.texture);
-    this.sprite.position.x = position.x;
-    this.sprite.position.y = position.y;
+    this.sprite.position.set(position.x, position.y);
   }
 }
 
 class Player extends Character {
   constructor(texture, size, position) {
     super();
+    this.speed = new Point(0, 0);
     this.position = position.copy();
     this.size = size.copy();
     this.texture = texture;
     this.sprite = new PIXI.Sprite(this.texture);
-    this.sprite.position.x = position.x;
-    this.sprite.position.y = position.y;
+    this.sprite.position.set(position.x, position.y);
+  }
+
+  move() {
+    this.sprite.x += this.speed.x; 
+    this.sprite.y += this.speed.y;
   }
 }

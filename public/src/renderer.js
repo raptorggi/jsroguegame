@@ -26,7 +26,7 @@ class Renderer {
         switch (template.self[y][x]) {
           case 0: map.self[y][x] = new Floor(this.texture[Floor.name], this.tile, new Point(x * 20, y * 20)); break;
           case 1: map.self[y][x] = new Wall(this.texture[Wall.name], this.tile, new Point(x * 20, y * 20)); break;
-          case 2: map.self[y][x] = new Player(this.texture[Player.name], this.tile, new Point(x * 20, y * 20)); console.log(map.self[y][x]); break;
+          case 2: map.self[y][x] = new Player(this.texture[Player.name], this.tile, new Point(x * 20, y * 20)); break;
         }
       this.stage.addChild(map.self[y][x].sprite);
       }

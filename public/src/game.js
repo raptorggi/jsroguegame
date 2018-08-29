@@ -19,6 +19,11 @@ class Game {
     this.non_static_objects = []; // array of references non static objects
   }
 
+  gameLoop(delta){
+    console.log(1)
+    this.actions();
+    this.renderer.render();
+  }
   // addKeyEventListeners(container_id) {
   //   let keys = document.getElementById(container_id);
   //   keys.addEventListener("keydown", function (event) {
@@ -40,25 +45,35 @@ class Game {
   init() {
     this.renderer.loadTextures(this.config.objects);
     this.generateMap();
+    this.keySetup();
+    this.ticker = new PIXI.ticker.Ticker();
+    this.ticker.add(delta => this.gameLoop(delta));
+    this.ticker.start();
   }
+
+  move() {
+
+  }
+
+  
 
   start() {
     this.init();
-    animate();
+  }
 
-    function animate() {
-      requestAnimationFrame(animate);
-      game.renderer.render();
-    }
+  actions() {
+    this.pl.move();
   }
 
   generateMap() {
     let template = this.map.createTemplate();
 
+    this.map.setStartPosition();
     this.player = this.map.start_position.copy();
     template.self[this.player.y][this.player.x] = 2;
-
     this.map.game_field = this.renderer.initMap(template);
+    this.pl = this.map.game_field.self[this.player.y][this.player.x];
+    console.log(this.pl)
   }
 
   draw() {
@@ -87,11 +102,60 @@ class Game {
     }
   }
 
-  actions() {
-    for (let object of this.non_static_objects) {
-      object.movement.reduce();
-    }
+  keySetup() {
+    //Capture the keyboard arrow keys
+    let left = keyboard(37),
+        up = keyboard(38),
+        right = keyboard(39),
+        down = keyboard(40);
+
+    left.press = () => {
+      this.pl.speed.x = -2;
+    };
+    
+    left.release = () => {
+      if (!right.isDown) {
+        this.pl.speed.x = 0;
+      }
+    };
+
+    right.press = () => {
+      this.pl.speed.x = 2;
+    };
+
+    right.release = () => {
+      if (!left.isDown) {
+        this.pl.speed.x = 0;
+      }
+    };
+
+    up.press = () => {
+      this.pl.speed.y = -2;
+    };
+
+    up.release = () => {
+      if (!down.isDown) {
+        this.pl.speed.y = 0;
+      }
+    };
+    
+    down.press = () => {
+      this.pl.speed.y = 2;
+    };
+
+    down.release = () => {
+      if (!up.isDown) {
+        this.pl.speed.y = 0;
+      }
+    };
+   
   }
+
+  // actions() {
+  //   for (let object of this.non_static_objects) {
+  //     object.movement.reduce();
+  //   }
+  // }
 
   stop() {
     this.started = 0;
