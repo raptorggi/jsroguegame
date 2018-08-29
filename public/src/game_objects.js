@@ -1,3 +1,15 @@
+class GameObjectsContainer {
+  constructor() {
+    this.static = [];
+    this.nonStatic = [];
+  }
+
+  push(object) {
+    (object.static) ? this.static.push(object) : this.nonStatic.push(object);
+  }
+}
+
+
 class GameObject {
   constructor() {
   }
@@ -18,6 +30,7 @@ class Character extends GameObject {
 class Wall extends Terrain {
   constructor(texture, size, position) {
     super();
+    this.static = true;
     this.position = position.copy();
     this.size = size.copy();
     this.texture = texture;
@@ -29,6 +42,7 @@ class Wall extends Terrain {
 class Floor extends Terrain {
   constructor(texture, size, position) {
     super();
+    this.static = true;
     this.position = position.copy();
     this.size = size.copy();
     this.texture = texture;
@@ -40,6 +54,7 @@ class Floor extends Terrain {
 class Player extends Character {
   constructor(texture, size, position) {
     super();
+    this.static = false;
     this.speed = new Point(0, 0);
     this.position = position.copy();
     this.size = size.copy();

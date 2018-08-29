@@ -2,7 +2,7 @@ class GameMap {
   constructor(w, h) {
     this.width = w;
     this.height = h;
-    this.game_field;
+    this.template;
     this.start_position;
   }
 
@@ -13,11 +13,11 @@ class GameMap {
     return false;
   }
 
-  setStartPosition() {
-    this.start_position = new Point(Math.abs(randomInteger(0, this.height - 1)), Math.abs(randomInteger(0, this.width - 1)));
-  }
-
   createTemplate() {
-    return new MapGenerator().generateGameFieldTemplate(this.width, this.height);
+    let data = new MapGenerator().generateGameFieldTemplate(this.width, this.height);
+    this.template = data[0];
+    this.start_position = data[1].copy();
+
+    return data[0];
   }
 } 

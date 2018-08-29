@@ -1,7 +1,7 @@
 {
-  "game_config": {
+  "game": {
     "window": {
-      "width": 1024,
+      "width": 1366,
       "height": 768
     },
     "map_size": {
@@ -19,6 +19,9 @@
     },
     "Player": {
       "texture_path": "assets/images/player.png"
+    },
+    "Default": {
+      "texture_path": "assets/images/default.png"
     }
   }
 }

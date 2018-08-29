@@ -4,13 +4,14 @@ class MapGenerator {
 
   generateGameFieldTemplate(width, height) {
     let template = this.initializeGameField(width, height);
-
+    let start_position = new Point(Math.abs(randomInteger(0, height - 1)), Math.abs(randomInteger(0, width - 1)));
+    this.createRoom(template, start_position, new Size(3, 3))
     let simulate_steps = 5;
     for (let step = 0; step <= simulate_steps; step++) {
       let new_template = this.simulateStep(template);
       template = new_template.copy();
     }
-    return template;
+    return [template, start_position];
   }
 
   initializeGameField(width, height) {
@@ -60,5 +61,15 @@ class MapGenerator {
       }
     }
     return count;
+  }
+
+  createRoom(template, center, size) {
+    for (let y = center.y - Math.floor(size.height / 2); y < center.y + Math.floor(size.height / 2); y++) {
+      for (let x = center.x - Math.floor(size.width / 2); x < center.x + Math.floor(size.width / 2); x++) {
+        if (x >= 0 && y >= 0 && x < template.width && y < template.height) {
+          template.self[y][x] = 0;
+        }
+      }
+    }
   }
 }
