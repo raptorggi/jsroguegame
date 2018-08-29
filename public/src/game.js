@@ -1,102 +1,68 @@
 class Game {
-  constructor(canvas, containerId) {
-    this.canvas_id = canvas;
-    this.container_id = containerId;
-    this.map_size = new Size(100, 100);
-    this.screen_size = new Size(41, 41);
+  constructor() {
+    this.config = loadConfig("assets/json/config.json");
+    this.map_size = new Size(40, 38);
+    this.screen_size = new Size(40, 38);
 
     this.map = new GameMap(this.map_size.width, this.map_size.height);
-    this.tile = new Size(15, 15);
-    this.map = new Size(this.screen_size.width * this.tile.width, this.screen_size.height * this.tile.height);
+    this.tile = new Size(20, 20);
     this.minimap = new Size(this.map_size.width * 2, this.map_size.height * 2);
     this.canvas = new Size(1366, 768);
+    this.screen_resolution = new Size(1366, 768);
+
+    this.renderer = new Renderer(this.screen_resolution, this.map_size, this.screen_size);
     
-    //Create a Pixi Application
-    this.renderer = PIXI.autoDetectRenderer({ width: 1366, height: 768});
-    this.stage = new PIXI.Container();
-    this.texture = PIXI.Texture.fromImage('assets/images/wall.png'); 
-
-    //var carrotTex = PIXI.Texture.fromImage('assets/carrot.png');
-
-    // create a new Sprite using the texture
-    this.bunny = new PIXI.Sprite(this.texture);
-    this.bunny.anchor.set(0.5);
-
-    this.stage.addChild(this.bunny);
-    this.renderer.render(this.stage);
-
-    //Add the canvas that Pixi automatically created for you to the HTML document
-    document.body.appendChild(this.renderer.view);
-
-    // PIXI.loader
-    //   .add("assets/images/wall.png")
-    //   .load(function () {
-    //     let cat = new PIXI.Sprite(PIXI.loader.resources["assets/images/wall.png"].texture);
-      
-    //   //Add the cat to the stage
-
-    //     game.app.stage.addChild(cat);
-    //   });
-
-    //This `setup` function will run when the image has loaded
-    
-    
-
     this.interface = new UserInteface("#ffffff", this.ctx);
     this.player;  // player coordinates (Point)
     this.player_new; //player coordinates after pressing move button
     this.started = 1;
     this.non_static_objects = []; // array of references non static objects
-
-    this.addKeyEventListeners(this.container_id);
   }
 
-  setup() {
+  // addKeyEventListeners(container_id) {
+  //   let keys = document.getElementById(container_id);
+  //   keys.addEventListener("keydown", function (event) {
+  //     let key = event.key || event.keyCode;
+  //     if (key === 'ArrowUp' || key === 'ArrowUp' || key === 38) {
+  //         game.player_new.y -= 1;
+  //     }
+  //     if (key === 'ArrowDown' || key === 'ArrowDown' || key === 40) {
+  //         game.player_new.y += 1;
+  //     }
+  //     if (key === 'ArrowLeft' || key === 'ArrowLeft' || key === 37) {
+  //         game.player_new.x -= 1;
+  //     }
+  //     if (key === 'ArrowRight' || key === 'ArrowRight' || key === 39) {
+  //         game.player_new.x += 1;
+  //     }
+  //   });
 
-      //Create the cat sprite
-      let cat = new PIXI.Sprite(PIXI.loader.resources["assets/images/wall.png"].texture);
-      
-      //Add the cat to the stage
-
-      this.app.stage.addChild(cat);
+  init() {
+    this.renderer.loadTextures(this.config.objects);
+    this.generateMap();
   }
 
-  addKeyEventListeners(container_id) {
-    let keys = document.getElementById(container_id);
-    keys.addEventListener("keydown", function (event) {
-      let key = event.key || event.keyCode;
-      if (key === 'ArrowUp' || key === 'ArrowUp' || key === 38) {
-          game.player_new.y -= 1;
-      }
-      if (key === 'ArrowDown' || key === 'ArrowDown' || key === 40) {
-          game.player_new.y += 1;
-      }
-      if (key === 'ArrowLeft' || key === 'ArrowLeft' || key === 37) {
-          game.player_new.x -= 1;
-      }
-      if (key === 'ArrowRight' || key === 'ArrowRight' || key === 39) {
-          game.player_new.x += 1;
-      }
-    });
+  start() {
+    this.init();
+    animate();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      game.renderer.render();
+    }
   }
 
   generateMap() {
-    let template = this.map.generateGameFieldTemplate();
-    for (let y = 0; y < this.map.height; y++) {
-      for (let x = 0; x < this.map.width; x++) {
-        if (template[y][x] == 1) {
-          this.map.game_field[y][x] = new Wall(this.renderer.tile.width, this.renderer.tile.height);
-        }
-      }
-    }
-    this.map.game_field[this.map.start_position.y][this.map.start_position.x] = new Player(this.renderer.tile.width, this.renderer.tile.height, 2);
+    let template = this.map.createTemplate();
+
     this.player = this.map.start_position.copy();
-    this.player_new = this.player.copy();
-    this.non_static_objects.push(this.map.game_field[this.player.y][this.player.x]);
+    template.self[this.player.y][this.player.x] = 2;
+
+    this.map.game_field = this.renderer.initMap(template);
   }
 
   draw() {
-    this.renderer.drawAll(this.map, this.player);
+    this.renderer.draw(this.map, this.player);
   }
 
   playerMove() {

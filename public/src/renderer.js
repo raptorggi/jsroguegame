@@ -1,35 +1,43 @@
 class Renderer {
-  constructor(canvas_id, container_id, map_size, screen_size) {
-    this.tile = new Size(15, 15);
+  constructor(window_size, map_size, screen_size) {
+    this.tile = new Size(20, 20);
     this.map_size = map_size;
     this.screen_size = screen_size;
-    this.map = new Size(this.screen_size.width * this.tile.width, this.screen_size.height * this.tile.height);
-    this.minimap = new Size(this.map_size.width * 2, this.map_size.height * 2);
-    this.canvas = new Size(this.map.width + 5 + this.minimap.width, this.map.height);
-    
-    //Create a Pixi Application
-    this.app = new PIXI.Application({ width: this.canvas.width, height: this.canvas.height});
-    //Add the canvas that Pixi automatically created for you to the HTML document
+    this.window = window_size;
+    this.texture = {};
+
+    this.initPIXI();
+    this.stage = new PIXI.Container();
+  }
+
+  initPIXI() {
+    this.app = PIXI.autoDetectRenderer({ width: this.window.width, height: this.window.height});
     document.body.appendChild(this.app.view);
   }
 
-  // loadCanvas(canvas_id, container_id, width, height) {
-  //   let canvas = document.createElement('canvas'),
-  //   div = document.getElementById(container_id);
-  //   canvas.id = canvas_id;
-  //   canvas.width = width;
-  //   canvas.height = height;
-  //   canvas.style.position = "absolute";
-  //   canvas.style.border = "1px solid";
-  //   div.appendChild(canvas);
-  //   return canvas;
-  // }
+  render() {
+    this.app.render(this.stage);
+  }
 
-  drawAll(map, player_position) {
+  initMap(template) {
+    let map = new Map(template.width, template.height);
+    for (let y = 0; y < template.height; y++) {
+      for (let x = 0; x < template.width; x++) {
+        switch (template.self[y][x]) {
+          case 0: map.self[y][x] = new Floor(this.texture[Floor.name], this.tile, new Point(x * 20, y * 20)); break;
+          case 1: map.self[y][x] = new Wall(this.texture[Wall.name], this.tile, new Point(x * 20, y * 20)); break;
+          case 2: map.self[y][x] = new Player(this.texture[Player.name], this.tile, new Point(x * 20, y * 20)); console.log(map.self[y][x]); break;
+        }
+      this.stage.addChild(map.self[y][x].sprite);
+      }
+    }
+    return map;
+  }
+
+  draw(map, player_position) {
     let position = this.getCameraStartCoordinates(player_position);
-    this.clearScreen(this.canvas.width, this.canvas.height);
-    // this.interface.drawDelimiters(this.canvas_px.width, this.canvas_px.height, this.map_px.width, this.map_px.height, this.minimap.width, this.minimap.height);
-    this.drawMainScreen(map, position);
+    // this.clearScreen(this.canvas.width, this.canvas.height);
+    // this.drawMainScreen(map, position);
     this.drawMinimap(map);
   }
 
@@ -76,5 +84,11 @@ class Renderer {
       point.x = this.map_size.width - this.screen_size.width;
     }
     return point;
+  }
+
+  loadTextures(objects) {
+    for (let object in objects) {
+      this.texture[object] = PIXI.Texture.fromImage(objects[object].texture_path) 
+    }
   }
 }

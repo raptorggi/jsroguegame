@@ -1,0 +1,24 @@
+{
+  "game_config": {
+    "window": {
+      "width": 1024,
+      "height": 768
+    },
+    "map_size": {
+      "width": 100,
+      "height": 100
+    }
+  },
+
+  "objects": {
+    "Wall": {
+      "texture_path": "assets/images/wall.png"
+    },
+    "Floor": {
+      "texture_path": "assets/images/floor.png"
+    },
+    "Player": {
+      "texture_path": "assets/images/player.png"
+    }
+  }
+}

@@ -1,34 +1,11 @@
 class GameObject {
-  constructor(w, h) {
-    this.width = w;
-    this.height = h;
-    this.color = "#000000";
+  constructor() {
   }
 }
 
 class Terrain extends GameObject {
   constructor() {
     super();
-  }
-
-}
-
-class Wall extends Terrain {
-  constructor(w, h) {
-    super();
-    this.width = w;
-    this.height = h;
-    this.color = "#d9d9d9";
-  }
-
-  drawOnMain(posX, posY, ctx) {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(posX, posY, this.width - 1, this.height - 1);
-  }
-
-  drawOnMinimap(posX, posY, ctx) {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(posX, posY, 2, 2);
   }
 }
 
@@ -38,22 +15,38 @@ class Character extends GameObject {
   }
 }
 
-class Player extends Character {
-  constructor(w, h, movement_cooldown) {
+class Wall extends Terrain {
+  constructor(texture, size, position) {
     super();
-    this.width = w;
-    this.height = h;
-    this.color = "#0080ff";
-    this.movement = new Action(movement_cooldown);
+    this.position = position.copy();
+    this.size = size.copy();
+    this.texture = texture;
+    this.sprite = new PIXI.Sprite(this.texture);
+    this.sprite.position.x = position.x;
+    this.sprite.position.y = position.y;
   }
+}
 
-  drawOnMain(posX, posY, ctx) {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(posX + 2, posY + 2, this.width - 4, this.height - 4);
+class Floor extends Terrain {
+  constructor(texture, size, position) {
+    super();
+    this.position = position.copy();
+    this.size = size.copy();
+    this.texture = texture;
+    this.sprite = new PIXI.Sprite(this.texture);
+    this.sprite.position.x = position.x;
+    this.sprite.position.y = position.y;
   }
+}
 
-  drawOnMinimap(posX, posY, ctx) {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(posX, posY, 2, 2);
+class Player extends Character {
+  constructor(texture, size, position) {
+    super();
+    this.position = position.copy();
+    this.size = size.copy();
+    this.texture = texture;
+    this.sprite = new PIXI.Sprite(this.texture);
+    this.sprite.position.x = position.x;
+    this.sprite.position.y = position.y;
   }
 }
