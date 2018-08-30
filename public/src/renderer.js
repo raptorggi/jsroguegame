@@ -1,32 +1,59 @@
-class Renderer {
+class Renderer { 
   constructor() {
-    this.tile = new Size(20, 20);
+    this.tile    = new Size(20, 20);
     this.texture = {};
-    this.stage = new PIXI.Container();
+
+    this.window_resolution = null;
+
+    this.app               = null;
+
+    this.window            = null;
+    this.stage             = null;
+    this.terrain_container = null;
+    this.objects_container = null;
+    this.camera            = null;
   }
 
-  init(window_size, screen_size) {
-    this.screen_size = screen_size;
-    this.window = window_size;
-    this.app = PIXI.autoDetectRenderer({ width: this.window.width, height: this.window.height});
+  init(window_resolution) {
+    this.window_resolution = window_resolution;
+
+    this.app = PIXI.autoDetectRenderer({ 
+      width:  this.window_resolution.width, 
+      height: this.window_resolution.height
+    });
+
     document.body.appendChild(this.app.view);
+
+    this.window            = new PIXI.Container();
+    this.stage             = new PIXI.Container();
+    this.terrain_container = new PIXI.Container();
+    this.objects_container = new PIXI.Container();
+    this.camera            = new PIXI.Container();
+
+    this.window.addChild(this.stage);
+    this.stage.addChild(this.terrain_container);
+    this.stage.addChild(this.objects_container);
+  }
+
+  initCamera() {
+    
+    this.window.AddChild(this.camera);
+    this.camera.width  = 800;
+    this.camera.height = 760;
+    this.camera.position.set(0,0);
   }
 
   render() {
-    this.app.render(this.stage);
-    this.game_window = new PIXI.Container();
-    let tex = new PIXI.RenderTexture.create(this.app, 800, 769);
-    //console.log(tex)
-    //tex.render(this.game_window);
-    //this.sprite = new PIXI.Sprite(tex);
-    //this.stage.addChild(this.sprite)
-    //this.app.render()
+    //this.window.width = 800;
+    //this.window.height = 760;
+    this.app.render(this.window);
   }
 
-  initMap(template, objects) {
-    let map = new Map(template.width, template.height);
+  initMap(template, map) {
+    //let map = new Map(template.width, template.height);
     for (let y = 0; y < template.height; y++) {
       for (let x = 0; x < template.width; x++) {
+        //map.terrain.self[y][x] = new 
         switch (template.self[y][x]) {
           case 0: objects.push(new Floor(this.texture[Floor.name], this.tile, new Point(x * 20, y * 20))); break;
           case 1: objects.push(new Wall(this.texture[Wall.name], this.tile, new Point(x * 20, y * 20))); break;
@@ -35,12 +62,15 @@ class Renderer {
       }
     }
     for (let i = 0; i < objects.static.length; i++) {
-      this.stage.addChild(objects.static[i].sprite);
+      this.window.addChild(objects.static[i].sprite);
     }
     for (let i = 0; i < objects.nonStatic.length; i++) {
-      this.stage.addChild(objects.nonStatic[i].sprite);
+      this.window.addChild(objects.nonStatic[i].sprite);
     }
     return map;
+    this.window.width = 800;
+    this.window.height = 760;
+    //this.initCamera();
   }
 
   loadTextures(objects) {

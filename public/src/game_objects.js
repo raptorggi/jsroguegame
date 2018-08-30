@@ -9,9 +9,11 @@ class GameObjectsContainer {
   }
 }
 
-
 class GameObject {
   constructor() {
+    this.static  = null;
+    this.texture = null;
+    this.sprite  = null;
   }
 }
 
@@ -28,39 +30,20 @@ class Character extends GameObject {
 }
 
 class Wall extends Terrain {
-  constructor(texture, size, position) {
-    super();
-    this.static = true;
-    this.position = position.copy();
-    this.size = size.copy();
-    this.texture = texture;
-    this.sprite = new PIXI.Sprite(this.texture);
-    this.sprite.position.set(position.x, position.y);
+  constructor() {
+    super();    
   }
 }
 
 class Floor extends Terrain {
-  constructor(texture, size, position) {
+  constructor() {
     super();
-    this.static = true;
-    this.position = position.copy();
-    this.size = size.copy();
-    this.texture = texture;
-    this.sprite = new PIXI.Sprite(this.texture);
-    this.sprite.position.set(position.x, position.y);
   }
 }
 
 class Player extends Character {
-  constructor(texture, size, position) {
+  constructor() {
     super();
-    this.static = false;
-    this.speed = new Point(0, 0);
-    this.position = position.copy();
-    this.size = size.copy();
-    this.texture = texture;
-    this.sprite = new PIXI.Sprite(this.texture);
-    this.sprite.position.set(position.x, position.y);
   }
 
   move() {
