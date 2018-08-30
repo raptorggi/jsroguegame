@@ -49,16 +49,10 @@ class Renderer {
     this.app.render(this.window);
   }
 
-  initMap(template, map) {
-    //let map = new Map(template.width, template.height);
+  initMap(map, factory, params) {
     for (let y = 0; y < template.height; y++) {
       for (let x = 0; x < template.width; x++) {
-        //map.terrain.self[y][x] = new 
-        switch (template.self[y][x]) {
-          case 0: objects.push(new Floor(this.texture[Floor.name], this.tile, new Point(x * 20, y * 20))); break;
-          case 1: objects.push(new Wall(this.texture[Wall.name], this.tile, new Point(x * 20, y * 20))); break;
-          case 2: objects.push(new Player(this.texture[Player.name], this.tile, new Point(x * 20, y * 20))); break;
-        }
+        map.terrain.self[y][x] = factory.create()
       }
     }
     for (let i = 0; i < objects.static.length; i++) {

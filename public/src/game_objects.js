@@ -45,9 +45,4 @@ class Player extends Character {
   constructor() {
     super();
   }
-
-  move() {
-    this.sprite.x += this.speed.x; 
-    this.sprite.y += this.speed.y;
-  }
 }

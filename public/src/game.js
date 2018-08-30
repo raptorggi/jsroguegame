@@ -8,6 +8,7 @@ class Game {
     this.screen_size = new Size(40, 38);
 
     this.screen_resolution = null;
+    this.factory           = null;
     this.renderer          = null;
     this.map               = null;
     this.ticker            = null;
@@ -25,10 +26,11 @@ class Game {
 
     this.screen_resolution = new Size(this.game_config.window.width, this.config.game.window.height);
 
+    this.factory        = new ObjectFactory();
+    this.renderer       = new Renderer();
     this.map            = new GameMap();
     this.ticker         = new PIXI.ticker.Ticker();
-    this.objects        = new GameObjectsContainer();
-    this.renderer       = new Renderer();
+    this.objects        = new GameObjectsContainer();  
 
     this.map.init(this.game_config.map_size);
     this.renderer.init(this.game_config.window);
@@ -49,10 +51,10 @@ class Game {
   }
 
   generateMap() {
-    let template = this.map.createTemplate();
+    this.map.createTemplate();
+    this.renderer.initMap(this.map, this.factory);
     //template.self[this.map.start_position.y][this.map.start_position.x] = 2;
-    this.renderer.initMap(template, this.objects);
-    this.player = this.objects.nonStatic[0];
+    //this.player = this.objects.nonStatic[0];
   }
 
   keySetup() {
