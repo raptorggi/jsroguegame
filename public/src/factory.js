@@ -1,4 +1,4 @@
-class ObjectFactory {
+class Factory {
   constructor() {}
 
   create(name, params, position, texture) {
@@ -13,12 +13,16 @@ class ObjectFactory {
     object.sprite  = new PIXI.Sprite(this.texture);
     object.sprite.position.set(position.x, position.y);
 
-    if (params.move) {
-      object.speed = new Point(0, 0);
-      object.move = () => {
+    if (params.move) {    
+      object.speed  = new Point(0, 0);
+      object.static = false;
+      object.move = function() {
         this.sprite.x += this.speed.x; 
         this.sprite.y += this.speed.y;
       }
+    }
+    else {
+      object.static = true;
     }
     
     return object;

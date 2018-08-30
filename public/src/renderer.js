@@ -50,16 +50,17 @@ class Renderer {
   }
 
   initMap(map, factory, params) {
-    for (let y = 0; y < template.height; y++) {
-      for (let x = 0; x < template.width; x++) {
-        map.terrain.self[y][x] = factory.create()
+    for (let y = 0; y < map.template.height; y++) {
+      for (let x = 0; x < map.template.width; x++) {
+        let object_name = map.template.self[y][x];
+        map.terrain.self[y][x] = factory.create( 
+                                                  object_name, 
+                                                  params[object_name],
+                                                  new Point(x, y),
+                                                  this.texture[object_name]
+                                                );
+        this.terrain_container.addChild(map.terrain.self[y][x].sprite);
       }
-    }
-    for (let i = 0; i < objects.static.length; i++) {
-      this.window.addChild(objects.static[i].sprite);
-    }
-    for (let i = 0; i < objects.nonStatic.length; i++) {
-      this.window.addChild(objects.nonStatic[i].sprite);
     }
     return map;
     this.window.width = 800;
