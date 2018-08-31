@@ -31,6 +31,6 @@ class GameMap {
       }
     }
     this.template       = data[0];
-    this.start_position = data[1].copy();
+    this.start_position = data[1];
   }
 } 

@@ -44,8 +44,6 @@ class Renderer {
   }
 
   render() {
-    //this.window.width = 800;
-    //this.window.height = 760;
     this.app.render(this.window);
   }
 
@@ -62,9 +60,8 @@ class Renderer {
         this.terrain_container.addChild(map.terrain.self[y][x].sprite);
       }
     }
-    return map;
-    this.window.width = 800;
-    this.window.height = 760;
+    //this.window.width = 800;
+    //this.window.height = 760;
     //this.initCamera();
   }
 

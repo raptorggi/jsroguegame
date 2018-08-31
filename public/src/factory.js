@@ -10,8 +10,8 @@ class Factory {
     }
 
     object.texture = texture;
-    object.sprite  = new PIXI.Sprite(this.texture);
-    object.sprite.position.set(position.x, position.y);
+    object.sprite  = new PIXI.Sprite(object.texture);
+    object.sprite.position.set(position.x * 20 , position.y * 20);
 
     if (params.move) {    
       object.speed  = new Point(0, 0);
@@ -24,7 +24,7 @@ class Factory {
     else {
       object.static = true;
     }
-    
+
     return object;
   }
 }

@@ -1,7 +1,7 @@
 class Game {
   constructor() {
     this.config = loadConfig("assets/json/config.json");
-    this.objects_config    = null;
+    this.objects_params    = null;
     this.game_config       = null;
 
     this.map_size    = new Size(60, 60);
@@ -17,12 +17,13 @@ class Game {
   }
 
   gameLoop(delta) {
+    //console.log(1)
     this.actions();
     this.renderer.render();
   }
 
   init() {
-    this.objects_config = this.config.objects;
+    this.objects_params = this.config.objects;
     this.game_config    = this.config.game;
 
     this.screen_resolution = new Size(this.game_config.window.width, this.config.game.window.height);
@@ -52,10 +53,10 @@ class Game {
 
   generateMap() {
     this.map.createTemplate();
-    this.renderer.initMap(this.map, this.factory, this.objects_config);
+    this.renderer.initMap(this.map, this.factory, this.objects_params);
     this.player = this.factory.create( 
                                         "Player", 
-                                        this.objects_config["Player"],
+                                        this.objects_params["Player"],
                                         this.map.start_position,
                                         this.renderer.texture["Player"]
                                       );
