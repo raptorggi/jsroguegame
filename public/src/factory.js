@@ -1,5 +1,8 @@
 class Factory {
-  constructor() {}
+  constructor(default_params, texture) {
+    this.default_paramstexture   = texture;
+    this.default_tile_size       = default_params.tile_size;
+  }
 
   create(name, params, position, texture) {
     let object = null;
@@ -9,16 +12,21 @@ class Factory {
       case "Player": object = new Player(); break;
     }
 
-    object.texture = texture;
-    object.sprite  = new PIXI.Sprite(object.texture);
-    object.sprite.position.set(position.x * 20 , position.y * 20);
+    object.canCollide = params.canCollide || false;
+    object.texture    = texture || this.default_texture;
+    object.size       = params.tile_size || this.default_tile_size;
+    object.sprite     = new PIXI.Sprite(object.texture);
+    object.sprite.position.set(position.x * object.size.width, position.y * object.size.height);
 
-    if (params.move) {    
+    if (params.move) {
       object.speed  = new Point(0, 0);
       object.static = false;
-      object.move = function() {
-        this.sprite.x += this.speed.x; 
-        this.sprite.y += this.speed.y;
+      
+      object.move = function(map) {
+        if (map.isObjectOnMap(new Point(this.sprite.x + this.speed.x, this.sprite.y + this.speed.y), this.size)) {
+          this.sprite.x += this.speed.x; 
+          this.sprite.y += this.speed.y;
+        }
       }
     }
     else {

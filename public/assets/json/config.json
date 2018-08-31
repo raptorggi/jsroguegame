@@ -9,15 +9,15 @@
       "height": 760
     },
     "map_size": {
-      "width": 40,
-      "height": 40
-    }
+      "width": 30,
+      "height": 30
+    }   
   },
-
   "objects": {
     "Wall": {
       "texture_path": "assets/images/wall.png",
-      "move": false
+      "move": false,
+      "canCollide": true
     },
     "Floor": {
       "texture_path": "assets/images/floor.png",
@@ -25,11 +25,20 @@
     },
     "Player": {
       "texture_path": "assets/images/player.png",
-      "move": true
+      "tile_size": {
+        "width": 13,
+        "height": 13
+      },
+      "move": true,
+      "canCollide": true
     },
     "Default": {
       "texture_path": "assets/images/default.png",
-      "move": false
+      "move": false,
+      "tile_size": {
+        "width": 21,
+        "height": 21
+      }
     }
   }
 }

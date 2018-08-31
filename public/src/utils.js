@@ -1,3 +1,11 @@
+function max(a, b) {
+  return (a > b) ? a : b;
+}
+
+function min(a, b) {
+  return (a < b) ? a : b;
+}
+
 function randomInteger(min, max) {
   var rand = min - 0.5 + Math.random() * (max - min + 1)
   rand = Math.round(rand);

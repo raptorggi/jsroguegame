@@ -47,22 +47,13 @@ class Renderer {
     this.app.render(this.window);
   }
 
-  initMap(map, factory, params) {
-    for (let y = 0; y < map.template.height; y++) {
-      for (let x = 0; x < map.template.width; x++) {
-        let object_name = map.template.self[y][x];
-        map.terrain.self[y][x] = factory.create( 
-                                                  object_name, 
-                                                  params[object_name],
-                                                  new Point(x, y),
-                                                  this.texture[object_name]
-                                                );
+  renderMap(map, factory, params) {
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
         this.terrain_container.addChild(map.terrain.self[y][x].sprite);
       }
     }
-    //this.window.width = 800;
-    //this.window.height = 760;
-    //this.initCamera();
+    this.objects_container.addChild(map.units.self[map.startPosition().y][map.startPosition().x].sprite);
   }
 
   loadTextures(objects) {
