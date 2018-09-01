@@ -1,2 +1,3 @@
 require './simple_server'
-run Sinatra::Application
+
+run SimpleServer.new

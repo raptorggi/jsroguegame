@@ -1,0 +1,44 @@
+{
+  "game": {
+    "window": {
+      "width": 1366,
+      "height": 768
+    },
+    "camera": {
+      "width": 800,
+      "height": 760
+    },
+    "map_size": {
+      "width": 30,
+      "height": 30
+    }   
+  },
+  "objects": {
+    "Wall": {
+      "texture_path": "assets/images/wall.png",
+      "move": false,
+      "canCollide": true
+    },
+    "Floor": {
+      "texture_path": "assets/images/floor.png",
+      "move": false
+    },
+    "Player": {
+      "texture_path": "assets/images/player.png",
+      "tile_size": {
+        "width": 13,
+        "height": 13
+      },
+      "move": true,
+      "canCollide": true
+    },
+    "Default": {
+      "texture_path": "assets/images/default.png",
+      "move": false,
+      "tile_size": {
+        "width": 21,
+        "height": 21
+      }
+    }
+  }
+}

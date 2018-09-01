@@ -2,16 +2,17 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <script src="./src/pixi/pixi.min.js"></script>
-  <script src="./src/utils.js"></script>
-  <script src="./src/factory.js"></script>
-  <script src="./src/collider.js"></script>
-  <script src="./src/game_objects.js"></script>
-  <script src="./src/map_generator.js"></script>
-  <script src="./src/game_map.js"></script>
-  <script src="./src/renderer.js"></script>
-  <script src="./src/game.js"></script>
-  <script src="./src/main.js"></script>
+  <%= javascript_tag 'application' %>
+  <%= javascript_tag 'pixi.min' %>
+  <%= javascript_tag 'utils' %>
+  <%= javascript_tag 'factory' %>
+  <%= javascript_tag 'collider' %>
+  <%= javascript_tag 'game_objects' %>
+  <%= javascript_tag 'map_generator' %>
+  <%= javascript_tag 'game_map' %>
+  <%= javascript_tag 'renderer' %>
+  <%= javascript_tag 'game' %>
+  <%= javascript_tag 'main' %>
 </head>
 <body onload="init()">
   <%= yield %>
