@@ -1,4 +1,4 @@
-require 'sinatra'
+require 'sinatra/base'
 require 'sprockets'
 require 'sprockets-helpers'
 require 'uglifier'
@@ -8,7 +8,8 @@ require 'execjs'
 
 class SimpleServer < Sinatra::Base
   set :sessions, false
-  set :public_folder, File.dirname(__FILE__) + '/static'
+  set :root, File.dirname(__FILE__)
+  set :public_folder, "#{File.dirname(__FILE__)}/public"
 
   set :sprockets, Sprockets::Environment.new(root)
   set :assets_prefix, '/assets'
@@ -36,6 +37,11 @@ class SimpleServer < Sinatra::Base
       # expand = true, digest = false, manifest = false
       config.debug       = true if development?
     end
+  end
+
+  get "/assets/*" do
+    env["PATH_INFO"].sub!("/assets", "")
+    settings.sprockets.call(env)
   end
 
   get '/' do
