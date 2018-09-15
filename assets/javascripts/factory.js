@@ -21,11 +21,28 @@ class Factory {
     if (params.move) {
       object.speed  = new Point(0, 0);
       object.static = false;
-      
+      object.position = position.copy();
+
       object.move = function(map) {
         if (map.isObjectOnMap(new Point(this.sprite.x + this.speed.x, this.sprite.y + this.speed.y), this.size)) {
           this.sprite.x += this.speed.x; 
           this.sprite.y += this.speed.y;
+          if (this.sprite.x - this.position.x * map.tile.width > (map.tile.width + (map.tile.width - this.size.width)) / 2 + 1) {
+            swap(map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x + 1]);
+            this.position.x++;
+          }
+          else if (this.sprite.x - this.position.x * map.tile.width < -(this.size.width / 2 - 1)) {
+            swap(map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x - 1]);
+            this.position.x--; 
+          }
+          else if (this.sprite.y - this.position.y * map.tile.height > (map.tile.height + (map.tile.height - this.size.height)) / 2 + 1) {
+            swap(map.units.self[this.position.y][this.position.x], map.units.self[this.position.y + 1][this.position.x]);
+            this.position.y++;
+          }
+          else if (this.sprite.y - this.position.y * map.tile.height < -(this.size.height / 2 - 1)) {
+            swap(map.units.self[this.position.y][this.position.x], map.units.self[this.position.y - 1][this.position.x]);
+            this.position.y--;
+          }
         }
       }
     }

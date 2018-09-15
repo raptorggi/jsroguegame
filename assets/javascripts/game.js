@@ -33,7 +33,7 @@ class Game {
     this.collider       = new Collider();
     this.ticker         = new PIXI.ticker.Ticker(); 
 
-    this.map.init(this.game_params.map_size);
+    this.map.init(this.game_params.map_size, this.objects_params);
     this.renderer.init(this.game_params.window);
     this.renderer.loadTextures(this.config.objects);
 
@@ -51,8 +51,11 @@ class Game {
 
   actions() {
     if (this.player.speed.x != 0 || this.player.speed.y != 0) {
-      
-      this.player.move(this.map);
+      let collisions = this.collider.collide(this.map, this.player);
+      if (collisions.length == 0) {
+        this.player.move(this.map);
+      }
+      //console.log(collisions)
     }
   }
 

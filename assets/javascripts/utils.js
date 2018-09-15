@@ -1,3 +1,9 @@
+function swap(a, b) {
+  let c = a;
+  a = b;
+  b = c;
+}
+
 function max(a, b) {
   return (a > b) ? a : b;
 }

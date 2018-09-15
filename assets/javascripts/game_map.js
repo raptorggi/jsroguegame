@@ -4,6 +4,7 @@ class GameMap {
     this.height         = null;
     this.width_px       = null;
     this.height_px      = null;
+    this.tile           = null;
 
     this.template       = null;
     this.terrain        = null;
@@ -11,11 +12,12 @@ class GameMap {
     this.start_position = null;
   }
 
-  init(size) {
+  init(size, object_params) {
     this.width     = size.width;
     this.height    = size.height;
-    this.width_px  = this.width * 21;
-    this.height_px = this.height * 21;
+    this.tile      = object_params.Default.tile_size;
+    this.width_px  = this.width * this.tile.width;
+    this.height_px = this.height * this.tile.height;
     this.terrain   = new Map(this.width, this.height);
     this.units     = new Map(this.width, this.height);
   }
