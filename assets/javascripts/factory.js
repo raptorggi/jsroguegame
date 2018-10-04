@@ -16,7 +16,7 @@ class Factory {
     object.texture    = texture || this.default_texture;
     object.size       = params.tile_size || this.default_tile_size;
     object.sprite     = new PIXI.Sprite(object.texture);
-    object.sprite.position.set(position.x * object.size.width, position.y * object.size.height);
+    object.sprite.position.set(position.x * this.default_tile_size.width, position.y * this.default_tile_size.height);
 
     if (params.move) {
       object.speed  = new Point(0, 0);
@@ -27,21 +27,25 @@ class Factory {
         if (map.isObjectOnMap(new Point(this.sprite.x + this.speed.x, this.sprite.y + this.speed.y), this.size)) {
           this.sprite.x += this.speed.x; 
           this.sprite.y += this.speed.y;
-          if (this.sprite.x - this.position.x * map.tile.width > (map.tile.width + (map.tile.width - this.size.width)) / 2 + 1) {
-            swap(map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x + 1]);
-            this.position.x++;
+          if (this.speed.x != 0) {
+            if (this.sprite.x - this.position.x * map.tile.width > (map.tile.width + (map.tile.width - this.size.width)) / 2 + 1) {
+              [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x + 1]] = [map.units.self[this.position.y][this.position.x + 1], map.units.self[this.position.y][this.position.x]]
+              this.position.x++;
+            }
+            else if (this.sprite.x - this.position.x * map.tile.width < -(this.size.width / 2 - 1)) {
+              [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x - 1]] = [map.units.self[this.position.y][this.position.x - 1], map.units.self[this.position.y][this.position.x]]
+              this.position.x--; 
+            }
           }
-          else if (this.sprite.x - this.position.x * map.tile.width < -(this.size.width / 2 - 1)) {
-            swap(map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x - 1]);
-            this.position.x--; 
-          }
-          else if (this.sprite.y - this.position.y * map.tile.height > (map.tile.height + (map.tile.height - this.size.height)) / 2 + 1) {
-            swap(map.units.self[this.position.y][this.position.x], map.units.self[this.position.y + 1][this.position.x]);
-            this.position.y++;
-          }
-          else if (this.sprite.y - this.position.y * map.tile.height < -(this.size.height / 2 - 1)) {
-            swap(map.units.self[this.position.y][this.position.x], map.units.self[this.position.y - 1][this.position.x]);
-            this.position.y--;
+          if (this.speed.y != 0) {
+            if (this.sprite.y - this.position.y * map.tile.height > (map.tile.height + (map.tile.height - this.size.height)) / 2 + 1) {
+              [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y + 1][this.position.x]] = [map.units.self[this.position.y + 1][this.position.x], map.units.self[this.position.y][this.position.x]]
+              this.position.y++;
+            }
+            else if (this.sprite.y - this.position.y * map.tile.height < -(this.size.height / 2 - 1)) {
+              [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y - 1][this.position.x]] = [map.units.self[this.position.y - 1][this.position.x], map.units.self[this.position.y][this.position.x]]
+              this.position.y--;
+            }
           }
         }
       }

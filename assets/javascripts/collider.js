@@ -11,7 +11,8 @@ class Collider {
         else if (neighbour_x >= 0 || neighbour_y >= 0 || neighbour_x < map.width || neighbour_y < map.height) {
           if (this.collideWith(object, map.units.self[neighbour_y][neighbour_x])) {
             collisions.push(map.units.self[neighbour_y][neighbour_x]);
-            console.log(map.units.self[neighbour_y][neighbour_x], neighbour_x, neighbour_y)
+            console.log([neighbour_x, neighbour_y], object, map.units.self[neighbour_y][neighbour_x], [x ,y]);
+            debugger;
           }
           if (this.collideWith(object, map.terrain.self[neighbour_y][neighbour_x])) {
             collisions.push(map.terrain.self[neighbour_y][neighbour_x]);

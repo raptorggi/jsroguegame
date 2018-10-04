@@ -51,17 +51,17 @@ class Game {
 
   actions() {
     if (this.player.speed.x != 0 || this.player.speed.y != 0) {
+      
       let collisions = this.collider.collide(this.map, this.player);
       if (collisions.length == 0) {
         this.player.move(this.map);
       }
-      //console.log(collisions)
+      console.log(collisions)
     }
   }
 
   generateMap() {
-    this.map.createMap(this.factory, this.renderer.texture, this.objects_params);
-    this.player = this.map.units.self[this.map.startPosition().y][this.map.startPosition().x];
+    this.player = this.map.createMap(this.factory, this.renderer.texture, this.objects_params);
     this.renderer.renderMap(this.map);  
   }
 
