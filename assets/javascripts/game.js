@@ -52,11 +52,11 @@ class Game {
   actions() {
     if (this.player.speed.x != 0 || this.player.speed.y != 0) {
       
-      let collisions = this.collider.collide(this.map, this.player);
-      if (collisions.length == 0) {
-        this.player.move(this.map);
-      }
-      console.log(collisions)
+      // let collisions = this.collider.collide(this.map, this.player);
+      // if (collisions.length == 0) {
+        this.player.move(this.map, this.collider);
+    //   }
+    //   console.log(collisions)
     }
   }
 
