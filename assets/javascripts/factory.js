@@ -25,44 +25,36 @@ class Factory {
 
       object.move = function(map, collider) {
         if (map.isObjectOnMap(new Point(this.sprite.x + this.speed.x, this.sprite.y + this.speed.y), this.size)) {
-          let state = {
-            x: { speed: this.speed.x, back: 0 },
-            y: { speed: this.speed.y, back: 0 }
+          let state = {   // save state before move
+            on_map: this.position.copy(),
+            sprite: { x: this.sprite.x, y: this.sprite.y }
           }
-          this.sprite.x += this.speed.x; 
-          this.sprite.y += this.speed.y;
-          if (this.speed.x != 0) {
-            if (this.sprite.x - this.position.x * map.tile.width > (map.tile.width + (map.tile.width - this.size.width)) / 2 + 1) {
-              [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x + 1]] = [map.units.self[this.position.y][this.position.x + 1], map.units.self[this.position.y][this.position.x]]
-              this.position.x++;
-              state.x.back--;
-            }
-            else if (this.sprite.x - this.position.x * map.tile.width < -(this.size.width / 2 - 1)) {
-              [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x - 1]] = [map.units.self[this.position.y][this.position.x - 1], map.units.self[this.position.y][this.position.x]]
-              this.position.x--;
-              state.x.back++;
-            }
+
+          if (this.speed.x != 0) { // movement on x axis
+            this.sprite.x   += this.speed.x;
+            let tile_mid    = this.size.width / 2 - 0.5;
+            let remain      = this.sprite.x % map.default_tile.width;
+            let x           = Math.trunc(this.sprite.x / map.default_tile.width);
+            this.position.x = (remain >= map.default_tile.width - tile_mid) ? x + 1 : x;
           }
-          if (this.speed.y != 0) {
-            if (this.sprite.y - this.position.y * map.tile.height > (map.tile.height + (map.tile.height - this.size.height)) / 2 + 1) {
-              [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y + 1][this.position.x]] = [map.units.self[this.position.y + 1][this.position.x], map.units.self[this.position.y][this.position.x]]
-              this.position.y++;
-              state.y.back--;
-            }
-            else if (this.sprite.y - this.position.y * map.tile.height < -(this.size.height / 2 - 1)) {
-              [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y - 1][this.position.x]] = [map.units.self[this.position.y - 1][this.position.x], map.units.self[this.position.y][this.position.x]]
-              this.position.y--;
-              state.y.back++;
-            }
+          if (this.speed.y != 0) { // movement on y axis
+            this.sprite.y   += this.speed.y;
+            let tile_mid    = this.size.height / 2 - 0.5;
+            let remain      = this.sprite.y % map.default_tile.height;
+            let y           = Math.trunc(this.sprite.y / map.default_tile.height);
+            this.position.y = (remain >= map.default_tile.height - tile_mid) ? y + 1 : y;
           }
-          let collisions = collider.collide(map, this);
-          if (collisions.length != 0) {
-            this.sprite.x -= state.x.speed;
-            this.sprite.y -= state.y.speed;
-            [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y][this.position.x + state.x.back]] = [map.units.self[this.position.y][this.position.x + state.x.back], map.units.self[this.position.y][this.position.x]]
-            [map.units.self[this.position.y][this.position.x], map.units.self[this.position.y + state.y.back][this.position.x]] = [map.units.self[this.position.y + state.y.back][this.position.x], map.units.self[this.position.y][this.position.x]]
-            this.position.x += state.x.back;
-            this.position.y += state.y.back; 
+
+          if (!(this.position.x == state.on_map.x && this.position.y == state.on_map.y)) { // swap on unit array
+            [map.units.self[state.on_map.y][state.on_map.x], map.units.self[this.position.y][this.position.x]] = [map.units.self[this.position.y][this.position.x], [state.on_map.y][state.on_map.x]]
+          }
+
+          let collisions = collider.collide(map, this); // check collisions
+          if (collisions.length != 0) { // rollback if collisions
+            [map.units.self[state.on_map.y][state.on_map.x], map.units.self[this.position.y][this.position.x]] = [map.units.self[this.position.y][this.position.x], [state.on_map.y][state.on_map.x]]
+            this.position = state.on_map.copy();
+            this.sprite.x = state.sprite.x;
+            this.sprite.y = state.sprite.y;
           }
         }
       }

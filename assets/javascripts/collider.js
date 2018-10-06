@@ -8,11 +8,10 @@ class Collider {
         let neighbour_x = object.position.x + x;
         let neighbour_y = object.position.y + y;
         if (x == 0 && y == 0 ) {}
-        else if (neighbour_x >= 0 || neighbour_y >= 0 || neighbour_x < map.width || neighbour_y < map.height) {
+        else if (neighbour_x >= 0 && neighbour_y >= 0 && neighbour_x < map.width && neighbour_y < map.height) {
           if (this.collideWith(object, map.units.self[neighbour_y][neighbour_x])) {
             collisions.push(map.units.self[neighbour_y][neighbour_x]);
             console.log([neighbour_x, neighbour_y], object, map.units.self[neighbour_y][neighbour_x], [x ,y]);
-            debugger;
           }
           if (this.collideWith(object, map.terrain.self[neighbour_y][neighbour_x])) {
             collisions.push(map.terrain.self[neighbour_y][neighbour_x]);
@@ -20,7 +19,6 @@ class Collider {
         }
       }
     }
-    // console.log(collisions)
     return collisions;
   }
 
