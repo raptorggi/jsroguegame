@@ -19,14 +19,14 @@ class Game {
 
   gameLoop(delta) {
     this.actions();
-    this.renderer.render();
+    this.renderer.render(this.player);
   }
 
   init() {
     this.objects_params = this.config.objects;
     this.game_params    = this.config.game;
 
-    this.screen_resolution = new Size(this.game_params.window.width, this.config.game.window.height);
+    this.screen_resolution = new Size(this.game_params.screen.width, this.config.game.screen.height);
     
     this.renderer       = new Renderer();
     this.map            = new GameMap();
@@ -34,7 +34,7 @@ class Game {
     this.ticker         = new PIXI.ticker.Ticker(); 
 
     this.map.init(this.game_params.map_size, this.objects_params);
-    this.renderer.init(this.game_params.window);
+    this.renderer.init(this.game_params.screen, this.game_params.window);
     this.renderer.loadTextures(this.config.objects);
 
     this.factory        = new Factory(this.objects_params.Default, this.renderer.texture["Default"]);
@@ -50,14 +50,8 @@ class Game {
   }
 
   actions() {
-    if (this.player.speed.x != 0 || this.player.speed.y != 0) {
-      
-      // let collisions = this.collider.collide(this.map, this.player);
-      // if (collisions.length == 0) {
-        this.player.move(this.map, this.collider);
-    //   }
-    //   console.log(collisions)
-    }
+    this.player.move(this.map, this.collider);
+
   }
 
   generateMap() {

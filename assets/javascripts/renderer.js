@@ -3,6 +3,7 @@ class Renderer {
     this.tile    = new Size(20, 20);
     this.texture = {};
 
+    this.screen_resolution = null;
     this.window_resolution = null;
 
     this.app               = null;
@@ -11,15 +12,16 @@ class Renderer {
     this.stage             = null;
     this.terrain_container = null;
     this.objects_container = null;
-    this.camera            = null;
+    this.interface         = null;
   }
 
-  init(window_resolution) {
-    this.window_resolution = window_resolution;
+  init(screen_resolution, window) {
+    this.screen_resolution = screen_resolution;
+    this.window_resolution = window;
 
     this.app = PIXI.autoDetectRenderer({ 
-      width:  this.window_resolution.width, 
-      height: this.window_resolution.height
+      width:  this.screen_resolution.width, 
+      height: this.screen_resolution.height
     });
 
     document.body.appendChild(this.app.view);
@@ -28,26 +30,21 @@ class Renderer {
     this.stage             = new PIXI.Container();
     this.terrain_container = new PIXI.Container();
     this.objects_container = new PIXI.Container();
-    this.camera            = new PIXI.Container();
 
     this.window.addChild(this.stage);
     this.stage.addChild(this.terrain_container);
     this.stage.addChild(this.objects_container);
+
   }
 
-  initCamera() {
-    
-    this.window.AddChild(this.camera);
-    this.camera.width  = 800;
-    this.camera.height = 760;
-    this.camera.position.set(0,0);
-  }
-
-  render() {
+  render(object) {
+    let position = this.getWindowPosition(object);
+    this.window.x = position.x;
+    this.window.y = position.y;
     this.app.render(this.window);
   }
 
-  renderMap(map, factory, params) {
+  renderMap(map) {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         this.terrain_container.addChild(map.terrain.self[y][x].sprite);
@@ -62,23 +59,26 @@ class Renderer {
     }
   }
 
-  getCameraStartCoordinates(player_position) {
-    let point = player_position.copy();
-    let w = (this.screen_size.width - 1) / 2;
-    let h = (this.screen_size.height - 1) / 2;
-    point.set(point.x - w, point.y - h);
-    if (point.y < 0) {
-      point.y = 0;
+  getWindowPosition(player) {
+    let mid_x = this.window_resolution.width / 2;
+    let mid_y = this.window_resolution.height / 2;
+    let point = {
+      x: mid_x - player.sprite.x,
+      y: mid_y - player.sprite.y 
     }
-    if (point.x < 0) {
+    if (player.sprite.x < mid_x ) {
       point.x = 0;
     }
-    if (point.y + this.screen_size.height > this.map_size.height - 1) {
-      point.y = this.map_size.height - this.screen_size.height;
+    if (player.sprite.y < mid_y) {
+      point.y = 0;
     }
-    if (point.x + this.screen_size.width > this.map_size.width - 1) {
-      point.x = this.map_size.width - this.screen_size.width;
+    if (player.sprite.x > this.stage.width - mid_x) {
+      point.x = -(this.stage.width - this.window_resolution.width);
+    }
+    if (player.sprite.y > this.stage.height - mid_y) {
+      point.y = -(this.stage.height - this.window_resolution.height);
     }
     return point;
   }
 }
+

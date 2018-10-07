@@ -1,16 +1,16 @@
 {
   "game": {
-    "window": {
+    "screen": {
       "width": 1366,
       "height": 768
     },
-    "camera": {
-      "width": 800,
-      "height": 760
+    "window": {
+      "width": 1050,
+      "height": 768
     },
     "map_size": {
-      "width": 30,
-      "height": 30
+      "width": 80,
+      "height": 70
     }   
   },
   "objects": {
