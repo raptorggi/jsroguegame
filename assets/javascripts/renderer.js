@@ -12,7 +12,7 @@ class Renderer {
     this.stage             = null;
     this.terrain_container = null;
     this.objects_container = null;
-    this.interface         = null;
+    this.right_bar         = null;
   }
 
   init(screen_resolution, window) {
@@ -27,6 +27,7 @@ class Renderer {
     document.body.appendChild(this.app.view);
 
     this.window            = new PIXI.Container();
+    this.right_bar         = new PIXI.Container();
     this.stage             = new PIXI.Container();
     this.terrain_container = new PIXI.Container();
     this.objects_container = new PIXI.Container();
@@ -35,13 +36,27 @@ class Renderer {
     this.stage.addChild(this.terrain_container);
     this.stage.addChild(this.objects_container);
 
+    this.initRigthBar();
   }
 
   render(object) {
+
     let position = this.getWindowPosition(object);
     this.window.x = position.x;
     this.window.y = position.y;
+    this.right_bar.x = this.window_resolution.width - this.window.x
+    this.right_bar.y = -this.window.y
     this.app.render(this.window);
+  }
+
+  initRigthBar() {
+    this.rectangle = new PIXI.Graphics();
+    this.rectangle.beginFill(0x000000);
+    this.rectangle.drawRect(0, 0, this.screen_resolution.width - this.window_resolution.width, this.screen_resolution.height);
+    this.right_bar.addChild(this.rectangle);
+    this.window.addChild(this.right_bar);
+    this.right_bar.x = this.window_resolution.width;
+    this.right_bar.y = 0;
   }
 
   renderMap(map) {
@@ -51,6 +66,10 @@ class Renderer {
       }
     }
     this.objects_container.addChild(map.units.self[map.startPosition().y][map.startPosition().x].sprite);
+  }
+
+  renderMinimap() {
+
   }
 
   loadTextures(objects) {
