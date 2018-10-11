@@ -15,16 +15,16 @@
   },
   "objects": {
     "Wall": {
-      "texture_path": "assets/images/wall.png",
+      "texture_path": "assets/images/map/wall.png",
       "move": false,
       "canCollide": true
     },
     "Floor": {
-      "texture_path": "assets/images/floor.png",
+      "texture_path": "assets/images/map/floor.png",
       "move": false
     },
     "Player": {
-      "texture_path": "assets/images/player.png",
+      "texture_path": "assets/images/map/player.png",
       "tile_size": {
         "width": 13,
         "height": 13
@@ -33,7 +33,7 @@
       "canCollide": true
     },
     "Default": {
-      "texture_path": "assets/images/default.png",
+      "texture_path": "assets/images/map/default.png",
       "move": false,
       "tile_size": {
         "width": 21,

@@ -12,7 +12,9 @@ class Renderer {
     this.stage             = null;
     this.terrain_container = null;
     this.objects_container = null;
+
     this.right_bar         = null;
+    
   }
 
   init(screen_resolution, window) {
@@ -27,10 +29,11 @@ class Renderer {
     document.body.appendChild(this.app.view);
 
     this.window            = new PIXI.Container();
-    this.right_bar         = new PIXI.Container();
     this.stage             = new PIXI.Container();
     this.terrain_container = new PIXI.Container();
     this.objects_container = new PIXI.Container();
+
+    this.right_bar         = new PIXI.Container();
 
     this.window.addChild(this.stage);
     this.stage.addChild(this.terrain_container);
@@ -40,12 +43,9 @@ class Renderer {
   }
 
   render(object) {
-
     let position = this.getWindowPosition(object);
-    this.window.x = position.x;
-    this.window.y = position.y;
-    this.right_bar.x = this.window_resolution.width - this.window.x
-    this.right_bar.y = -this.window.y
+    this.stage.x = position.x;
+    this.stage.y = position.y;
     this.app.render(this.window);
   }
 
