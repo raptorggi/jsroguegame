@@ -34,8 +34,8 @@ class Game {
     this.ticker         = new PIXI.ticker.Ticker(); 
 
     this.map.init(this.game_params.map_size, this.objects_params);
-    this.renderer.init(this.game_params.screen, this.game_params.window);
-    this.renderer.loadTextures(this.config.objects);
+    this.renderer.init(this.config);
+    this.renderer.loadTextures(this.config.objects, this.config.minimap);
 
     this.factory        = new Factory(this.objects_params.Default, this.renderer.texture["Default"]);
 
@@ -56,7 +56,8 @@ class Game {
 
   generateMap() {
     this.player = this.map.createMap(this.factory, this.renderer.texture, this.objects_params);
-    this.renderer.renderMap(this.map);  
+    this.renderer.renderMap(this.map);
+    this.renderer.renderMinimap(this.map);
   }
 
   keySetup() {

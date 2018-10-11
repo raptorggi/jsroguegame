@@ -10,16 +10,16 @@ class Renderer {
 
     this.window            = null;
     this.stage             = null;
-    this.terrain_container = null;
-    this.objects_container = null;
+    this.terrain = null;
+    this.objects = null;
 
     this.right_bar         = null;
-    
+    this.minimap           = null;
   }
 
-  init(screen_resolution, window) {
-    this.screen_resolution = screen_resolution;
-    this.window_resolution = window;
+  init(params) {
+    this.screen_resolution = params.game.screen;
+    this.window_resolution = params.game.window;
 
     this.app = PIXI.autoDetectRenderer({ 
       width:  this.screen_resolution.width, 
@@ -28,18 +28,22 @@ class Renderer {
 
     document.body.appendChild(this.app.view);
 
-    this.window            = new PIXI.Container();
-    this.stage             = new PIXI.Container();
-    this.terrain_container = new PIXI.Container();
-    this.objects_container = new PIXI.Container();
+    this.window    = new PIXI.Container();
+    this.stage     = new PIXI.Container();
+    this.terrain   = new PIXI.Container();
+    this.objects   = new PIXI.Container();
 
-    this.right_bar         = new PIXI.Container();
+    this.right_bar = new PIXI.Container();
+    this.minimap   = new MiniMap();
 
     this.window.addChild(this.stage);
-    this.stage.addChild(this.terrain_container);
-    this.stage.addChild(this.objects_container);
+    this.stage.addChild(this.terrain);
+    this.stage.addChild(this.objects);
 
     this.initRigthBar();
+    
+    this.minimap.init(params.minimap.tile_size);
+    this.right_bar.addChild(this.minimap.ctx());
   }
 
   render(object) {
@@ -62,19 +66,23 @@ class Renderer {
   renderMap(map) {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        this.terrain_container.addChild(map.terrain.self[y][x].sprite);
+        this.terrain.addChild(map.terrain.self[y][x].sprite);
       }
     }
-    this.objects_container.addChild(map.units.self[map.startPosition().y][map.startPosition().x].sprite);
+    this.objects.addChild(map.units.self[map.startPosition().y][map.startPosition().x].sprite);
   }
 
-  renderMinimap() {
-
+  renderMinimap(map) {
+    this.minimap.render(map);
   }
 
-  loadTextures(objects) {
+  loadTextures(objects, minimap) {
+    this.texture["minimap"] = {};
     for (let object in objects) {
-      this.texture[object] = PIXI.Texture.fromImage(objects[object].texture_path) 
+      this.texture[object] = PIXI.Texture.fromImage(objects[object].texture_path);
+    }
+    for (let object in minimap.textures) {
+      this.texture["minimap"][object] = PIXI.Texture.fromImage(minimap.textures[object]);
     }
   }
 

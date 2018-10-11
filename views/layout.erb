@@ -4,15 +4,16 @@
   <meta charset="utf-8" />
   <%= javascript_tag 'application' %>
   <%= javascript_tag 'pixi/pixi.min' %>
-  <%= javascript_tag 'utils' %>
-  <%= javascript_tag 'factory' %>
-  <%= javascript_tag 'collider' %>
-  <%= javascript_tag 'game_objects' %>
-  <%= javascript_tag 'map_generator' %>
-  <%= javascript_tag 'game_map' %>
-  <%= javascript_tag 'renderer' %>
-  <%= javascript_tag 'game' %>
-  <%= javascript_tag 'main' %>
+  <%= javascript_tag 'src/utils' %>
+  <%= javascript_tag 'src/factory' %>
+  <%= javascript_tag 'src/collider' %>
+  <%= javascript_tag 'src/objects' %>
+  <%= javascript_tag 'src/map_generator' %>
+  <%= javascript_tag 'src/map' %>
+  <%= javascript_tag 'src/minimap' %>
+  <%= javascript_tag 'src/renderer' %>
+  <%= javascript_tag 'src/game' %>
+  <%= javascript_tag 'src/main' %>
 </head>
 <body onload="init()">
   <%= yield %>

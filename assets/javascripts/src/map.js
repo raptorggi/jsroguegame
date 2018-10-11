@@ -4,7 +4,7 @@ class GameMap {
     this.height         = null;
     this.width_px       = null;
     this.height_px      = null;
-    this.default_tile    = null;
+    this.default_tile   = null;
 
     this.template       = null;
     this.terrain        = null;
@@ -13,13 +13,13 @@ class GameMap {
   }
 
   init(size, object_params) {
-    this.width     = size.width;
-    this.height    = size.height;
-    this.default_tile      = object_params.Default.tile_size;
-    this.width_px  = this.width * this.default_tile.width;
-    this.height_px = this.height * this.default_tile.height;
-    this.terrain   = new Map(this.width, this.height);
-    this.units     = new Map(this.width, this.height);
+    this.width        = size.width;
+    this.height       = size.height;
+    this.default_tile = object_params.Default.tile_size;
+    this.width_px     = this.width * this.default_tile.width;
+    this.height_px    = this.height * this.default_tile.height;
+    this.terrain      = new Map(this.width, this.height);
+    this.units        = new Map(this.width, this.height);
   }
 
   isPointOnMap(coords) {
@@ -49,7 +49,7 @@ class GameMap {
                                                   object_name, 
                                                   params[object_name],
                                                   new Point(x, y),
-                                                  texture[object_name]
+                                                  texture
                                                 );
       }
     }
@@ -57,7 +57,7 @@ class GameMap {
                                                                                     "Player", 
                                                                                     params["Player"],
                                                                                     this.start_position,
-                                                                                    texture["Player"]
+                                                                                    texture
                                                                                   );
     return this.units.self[this.start_position.y][this.start_position.x];
   }

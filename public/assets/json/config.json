@@ -9,36 +9,54 @@
       "height": 768
     },
     "map_size": {
-      "width": 80,
-      "height": 70
-    }   
+      "width": 100,
+      "height": 100
+    }
   },
   "objects": {
     "Wall": {
       "texture_path": "assets/images/map/wall.png",
+      "role": "terrain",
       "move": false,
       "canCollide": true
     },
     "Floor": {
       "texture_path": "assets/images/map/floor.png",
+      "role": "terrain",
       "move": false
     },
     "Player": {
       "texture_path": "assets/images/map/player.png",
+      "role": "ally",
+      "move": true,
+      "canCollide": true,
       "tile_size": {
         "width": 13,
         "height": 13
-      },
-      "move": true,
-      "canCollide": true
+      }
     },
     "Default": {
       "texture_path": "assets/images/map/default.png",
+      "role": "terrain",
       "move": false,
+      "canCollide": true,
       "tile_size": {
         "width": 21,
         "height": 21
       }
+    }
+  },
+  "minimap": {
+    "textures": {
+      "ally" : "assets/images/minimap/ally.png",
+      "enemy": "assets/images/minimap/enemy.png",
+      "Wall": "assets/images/minimap/wall.png",
+      "Floor": "assets/images/minimap/floor.png",
+      "Default": "assets/images/minimap/default.png"
+    },
+    "minimap_tile_size": {
+      "width": 1,
+      "height": 1
     }
   }
 }

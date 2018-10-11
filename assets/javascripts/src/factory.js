@@ -1,7 +1,9 @@
 class Factory {
   constructor(default_params, texture) {
-    this.default_paramstexture   = texture;
+    this.default_texture   = texture;
     this.default_tile_size       = default_params.tile_size;
+    this.default_role            = default_params.role;
+    this.minimap_tile_size        = {width: 1, height: 1};//// TODO!!!!!!
   }
 
   create(name, params, position, texture) {
@@ -12,16 +14,28 @@ class Factory {
       case "Player": object = new Player(); break;
     }
 
+    object.role       = params.role || this.default_role;
     object.canCollide = params.canCollide || false;
-    object.texture    = texture || this.default_texture;
+    object.texture    = texture[name] || this.default_texture;
     object.size       = params.tile_size || this.default_tile_size;
+    object.position   = position.copy();
+
+    if (object.role == "ally" || object.role == "enemy") {
+      object.minimap_texture = texture["minimap"][object.role || this.default_role];
+    }
+    else {
+      object.minimap_texture = texture["minimap"][name || this.default_role];
+    }
+
     object.sprite     = new PIXI.Sprite(object.texture);
     object.sprite.position.set(position.x * this.default_tile_size.width, position.y * this.default_tile_size.height);
+    
+    object.minimap_sprite = new PIXI.Sprite(object.minimap_texture);
+    object.minimap_sprite.position.set(object.position.x * this.minimap_tile_size, object.position.y * this.minimap_tile_size);
 
-    if (params.move) {
+    if (params.move) { // add move function to the object
       object.speed  = new Point(0, 0);
       object.static = false;
-      object.position = position.copy();
 
       object.move = function(map, collider) {
         if (map.isObjectOnMap(new Point(this.sprite.x + this.speed.x, this.sprite.y + this.speed.y), this.size)) {
