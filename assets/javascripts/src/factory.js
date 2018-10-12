@@ -3,7 +3,7 @@ class Factory {
     this.default_texture   = texture;
     this.default_tile_size       = default_params.tile_size;
     this.default_role            = default_params.role;
-    this.minimap_tile_size        = {width: 1, height: 1};//// TODO!!!!!!
+    this.minimap_tile_size        = {width: 3, height: 3};//// TODO!!!!!!
   }
 
   create(name, params, position, texture) {
@@ -31,7 +31,7 @@ class Factory {
     object.sprite.position.set(position.x * this.default_tile_size.width, position.y * this.default_tile_size.height);
     
     object.minimap_sprite = new PIXI.Sprite(object.minimap_texture);
-    object.minimap_sprite.position.set(object.position.x * this.minimap_tile_size, object.position.y * this.minimap_tile_size);
+    object.minimap_sprite.position.set(position.x * this.minimap_tile_size.width, position.y * this.minimap_tile_size.height);
 
     if (params.move) { // add move function to the object
       object.speed  = new Point(0, 0);
