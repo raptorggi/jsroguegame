@@ -1,11 +1,6 @@
 class Game {
   constructor() {
     this.config = loadConfig("assets/json/config.json");
-    this.objects_params    = null;
-    this.game_params       = null;
-
-    this.map_size    = new Size(60, 60);
-    this.screen_size = new Size(40, 38);
 
     this.screen_resolution = null;
     this.player            = null;
@@ -23,21 +18,16 @@ class Game {
   }
 
   init() {
-    this.objects_params = this.config.objects;
-    this.game_params    = this.config.game;
-
-    this.screen_resolution = new Size(this.game_params.screen.width, this.config.game.screen.height);
-    
     this.renderer       = new Renderer();
     this.map            = new GameMap();
     this.collider       = new Collider();
     this.ticker         = new PIXI.ticker.Ticker(); 
 
-    this.map.init(this.game_params.map_size, this.objects_params);
+    this.map.init(this.config);
     this.renderer.init(this.config);
     this.renderer.loadTextures(this.config.objects, this.config.minimap);
 
-    this.factory        = new Factory(this.objects_params.Default, this.renderer.texture["Default"]);
+    this.factory        = new Factory(this.config, this.renderer.texture["Default"]);
 
     this.generateMap();
     this.keySetup();
@@ -55,7 +45,7 @@ class Game {
   }
 
   generateMap() {
-    this.player = this.map.createMap(this.factory, this.renderer.texture, this.objects_params);
+    this.player = this.map.createMap(this.factory, this.renderer.texture, this.config);
     this.renderer.renderMap(this.map);
     this.renderer.renderMinimap(this.map);
   }

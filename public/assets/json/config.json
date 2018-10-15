@@ -1,5 +1,5 @@
 {
-  "game": {
+  "resolution": {
     "screen": {
       "width": 1366,
       "height": 768
@@ -7,12 +7,20 @@
     "window": {
       "width": 1050,
       "height": 768
-    },
-    "map_size": {
-      "width": 100,
-      "height": 100
     }
   },
+
+  "map": {
+    "size": {
+      "width": 20,
+      "height": 20
+    },
+    "chunk": {
+      "width": 5,
+      "height": 5
+    }
+  },
+
   "objects": {
     "Wall": {
       "texture_path": "assets/images/map/wall.png",
@@ -46,6 +54,7 @@
       }
     }
   },
+  
   "minimap": {
     "textures": {
       "ally" : "assets/images/minimap/ally.png",

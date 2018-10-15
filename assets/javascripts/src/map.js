@@ -12,10 +12,10 @@ class GameMap {
     this.start_position = null;
   }
 
-  init(size, object_params) {
-    this.width        = size.width;
-    this.height       = size.height;
-    this.default_tile = object_params.Default.tile_size;
+  init(config) {
+    this.width        = config.map.size.width * config.map.chunk.width;
+    this.height       = config.map.size.height * config.map.chunk.height;
+    this.default_tile = config.objects.Default.tile_size;
     this.width_px     = this.width * this.default_tile.width;
     this.height_px    = this.height * this.default_tile.height;
     this.terrain      = new Map(this.width, this.height);
@@ -40,14 +40,14 @@ class GameMap {
     return this.start_position;
   }
 
-  createMap(factory, texture, params) {
+  createMap(factory, texture, config) {
     this.createTemplate();
     for (let y = 0; y < this.template.height; y++) {
       for (let x = 0; x < this.template.width; x++) {
         let object_name = this.template.self[y][x];
         this.terrain.self[y][x] = factory.create( 
                                                   object_name, 
-                                                  params[object_name],
+                                                  config.objects[object_name],
                                                   new Point(x, y),
                                                   texture
                                                 );
@@ -55,7 +55,7 @@ class GameMap {
     }
     this.units.self[this.start_position.y][this.start_position.x] = factory.create( 
                                                                                     "Player", 
-                                                                                    params["Player"],
+                                                                                    config.objects["Player"],
                                                                                     this.start_position,
                                                                                     texture
                                                                                   );

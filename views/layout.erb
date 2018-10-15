@@ -4,14 +4,18 @@
   <meta charset="utf-8" />
   <%= javascript_tag 'application' %>
   <%= javascript_tag 'pixi/pixi.min' %>
+
+  <%= javascript_tag 'src/renderer/renderer' %>
+  <%= javascript_tag 'src/renderer/minimap' %>
+  <%= javascript_tag 'src/renderer/viewport' %>
+
   <%= javascript_tag 'src/utils' %>
   <%= javascript_tag 'src/factory' %>
   <%= javascript_tag 'src/collider' %>
   <%= javascript_tag 'src/objects' %>
   <%= javascript_tag 'src/map_generator' %>
   <%= javascript_tag 'src/map' %>
-  <%= javascript_tag 'src/minimap' %>
-  <%= javascript_tag 'src/renderer' %>
+  
   <%= javascript_tag 'src/game' %>
   <%= javascript_tag 'src/main' %>
 </head>

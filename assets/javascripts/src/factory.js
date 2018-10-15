@@ -1,9 +1,9 @@
 class Factory {
-  constructor(default_params, texture) {
+  constructor(config, texture) {
     this.default_texture   = texture;
-    this.default_tile_size       = default_params.tile_size;
-    this.default_role            = default_params.role;
-    this.minimap_tile_size        = {width: 3, height: 3};//// TODO!!!!!!
+    this.default_tile_size = config.objects.Default.tile_size;
+    this.default_role      = config.objects.Default.role;
+    this.minimap_tile_size = {width: 3, height: 3};//// TODO!!!!!!
   }
 
   create(name, params, position, texture) {

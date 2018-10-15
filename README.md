@@ -1,8 +1,7 @@
 # jsroguegame
 
-install Sinatra: gem install sinatra
-install Shotgun: gem install shotgun
+bundle install
 
-start: shotgun simple_server.rb
+start: bundle exec rackup config.rb
 
-url: http://localhost:9393
+url: http://localhost:9292

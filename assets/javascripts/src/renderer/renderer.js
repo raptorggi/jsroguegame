@@ -10,16 +10,16 @@ class Renderer {
 
     this.window            = null;
     this.stage             = null;
-    this.terrain = null;
-    this.objects = null;
+    this.terrain           = null;
+    this.objects           = null;
 
     this.right_bar         = null;
     this.minimap           = null;
   }
 
-  init(params) {
-    this.screen_resolution = params.game.screen;
-    this.window_resolution = params.game.window;
+  init(config) {
+    this.screen_resolution = config.resolution.screen;
+    this.window_resolution = config.resolution.window;
 
     this.app = PIXI.autoDetectRenderer({ 
       width:  this.screen_resolution.width, 
@@ -42,7 +42,7 @@ class Renderer {
 
     this.initRigthBar();
     
-    this.minimap.init(params.minimap.tile_size);
+    this.minimap.init(config.minimap.tile_size);
     this.right_bar.addChild(this.minimap.ctx());
   }
 
@@ -108,4 +108,16 @@ class Renderer {
     return point;
   }
 }
+
+// your tilemap containervar 
+mapContainer = new PIXI.DisplayObjectContainer();
+// ... add all the sprites to the container
+// render the tilemap to a render texturevar 
+texture = new PIXI.RenderTexture();
+texture.render(mapContainer);
+// create a single background sprite with the texturevar 
+background = new PIXI.Sprite(texture);
+// add the background to the stage
+// (notice I didn't add the mapContainer to the scene graph)
+stage.addChild(background);
 
