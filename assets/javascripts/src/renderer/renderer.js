@@ -30,14 +30,16 @@ class Renderer {
 
     this.window    = new PIXI.Container();
     this.stage     = new PIXI.Container();
-    this.terrain   = new PIXI.Container();
     this.objects   = new PIXI.Container();
 
     this.right_bar = new PIXI.Container();
     this.minimap   = new MiniMap();
 
+    this.terrain   = new Viewport();
+    this.terrain.init(config);
+
     this.window.addChild(this.stage);
-    this.stage.addChild(this.terrain);
+    this.stage.addChild(this.terrain.ctx());
     this.stage.addChild(this.objects);
 
     this.initRigthBar();
@@ -64,11 +66,12 @@ class Renderer {
   }
 
   renderMap(map) {
-    for (let y = 0; y < map.height; y++) {
-      for (let x = 0; x < map.width; x++) {
-        this.terrain.addChild(map.terrain.self[y][x].sprite);
-      }
-    }
+    // for (let y = 0; y < map.height; y++) {
+    //   for (let x = 0; x < map.width; x++) {
+    //     this.terrain.addChild(map.terrain.self[y][x].sprite);
+    //   }
+    // }
+    this.terrain.build(map.terrain);
     this.objects.addChild(map.units.self[map.startPosition().y][map.startPosition().x].sprite);
   }
 
@@ -108,16 +111,4 @@ class Renderer {
     return point;
   }
 }
-
-// your tilemap containervar 
-mapContainer = new PIXI.DisplayObjectContainer();
-// ... add all the sprites to the container
-// render the tilemap to a render texturevar 
-texture = new PIXI.RenderTexture();
-texture.render(mapContainer);
-// create a single background sprite with the texturevar 
-background = new PIXI.Sprite(texture);
-// add the background to the stage
-// (notice I didn't add the mapContainer to the scene graph)
-stage.addChild(background);
 
