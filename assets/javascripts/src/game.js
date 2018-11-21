@@ -16,7 +16,7 @@ class Game {
     this.actions();
     this.renderer.render(this.player);
   }
-
+ 
   init() {
     this.renderer       = new Renderer();
     this.map            = new GameMap();

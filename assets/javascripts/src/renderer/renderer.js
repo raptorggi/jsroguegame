@@ -66,12 +66,7 @@ class Renderer {
   }
 
   renderMap(map) {
-    // for (let y = 0; y < map.height; y++) {
-    //   for (let x = 0; x < map.width; x++) {
-    //     this.terrain.addChild(map.terrain.self[y][x].sprite);
-    //   }
-    // }
-    this.terrain.build(map.terrain);
+    this.terrain.build(map);
     this.objects.addChild(map.units.self[map.startPosition().y][map.startPosition().x].sprite);
   }
 

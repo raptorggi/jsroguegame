@@ -6,14 +6,15 @@ class ChunkRenderer {
     this.renderer  = null;
   }
 
-  init(config) {
+  init(config, renderer) {
     this.size      = config.map.chunk;
     this.tile_size = config.objects.Default.tile_size;
 
-    this.renderer  = new PIXI.CanvasRenderer({
-      width: this.size.width * this.tile_size.width,
-      height: this.size.height * this.tile_size.height,
-    });
+    // this.renderer  = new PIXI.CanvasRenderer({
+    //   width: this.size.width * this.tile_size.width,
+    //   height: this.size.height * this.tile_size.height,
+    // });
+    this.renderer = renderer;
   }
 
   render(map, position) {
@@ -36,8 +37,9 @@ class ChunkRenderer {
       }
     }
     // debugger
-    this.renderer.render(container);
-    let texture = PIXI.Texture.fromCanvas(this.renderer.view);
+    // this.renderer.render(container);
+    console.log(this.texture)
+    let texture = this.renderer.generateTexture(container);
     // let texture = this.renderer.generateTexture(container);
     // txt = PIXI.SystemRenderer.generateTexture(container);
     for(let y = 0; y < this.size.height; y++) {
@@ -49,9 +51,3 @@ class ChunkRenderer {
     return texture;
   }
 }
-
-// var renderer = new PIXI.WebGLRenderer(...);
-// var canvasRenderer = new PIXI.CanvasRenderer(...);
-// var cacheSprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvasRenderer.view));
-// canvasRenderer.render(precachedScene);
-// renderer.render(cacheSprite);
